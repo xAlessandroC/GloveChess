@@ -9,10 +9,10 @@ from calibration import *
 from feature_detection import *
 from rendering import *
 
-test_path = "resources/marker/image_5.jpg"
+test_path = "resources/marker/image_1.jpg"
 model_path = "resources/marker/model.png"
 
-rms, camera_matrix, dist_coefs, rvecs, tvecs = calibrate()
+camera_matrix, dist_coefs, rvecs, tvecs = calibrate()
 
 test_image = cv2.imread(test_path,0)
 model_image = cv2.imread(model_path,0)

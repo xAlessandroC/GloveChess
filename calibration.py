@@ -1,5 +1,6 @@
 import numpy as np
 import cv2
+import os
 
 square_size = 26.5
 pattern_size = (8,5)
@@ -27,7 +28,7 @@ def processImage(fn, pattern_points):
     print('           %s... OK' % fn)
     return (corners.reshape(-1, 2), pattern_points)
 
-def calibrate():
+def calibration():
 
     dirname = "resources/calibration/"
     img_names = [dirname + str(i) + ".jpg" for i in range(13)]
@@ -55,3 +56,24 @@ def calibrate():
     # Calibrating Camera
     rms, camera_matrix, dist_coefs, rvecs, tvecs = cv2.calibrateCamera(obj_points, img_points, (w, h), None, None)
     return (rms, camera_matrix, dist_coefs, rvecs, tvecs)
+
+
+def calibrate():
+    parameters_path = "resources/data/"
+
+    ##CACHE CALIBRATION RESULTS
+    if len(os.listdir(parameters_path)) != 4:
+        print("[Error]: Parameters file not present ", len(os.listdir(parameters_path)))
+        rms, camera_matrix, dist_coefs, rvecs, tvecs = calibration()
+        np.save(parameters_path+"camera_matrix.npy", camera_matrix)
+        np.save(parameters_path+"dist_coefs.npy", dist_coefs)
+        np.save(parameters_path+"rvecs.npy", rvecs)
+        np.save(parameters_path+"tvecs.npy", tvecs)
+    else:
+        print("Loading calibration results...")
+        camera_matrix = np.load(parameters_path+"camera_matrix.npy")
+        dist_coefs = np.load(parameters_path+"dist_coefs.npy")
+        rvecs = np.load(parameters_path+"rvecs.npy")
+        tvecs = np.load(parameters_path+"tvecs.npy")
+
+    return (camera_matrix,dist_coefs,rvecs,tvecs)
