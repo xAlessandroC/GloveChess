@@ -19,7 +19,7 @@ class OBJ:
                 v = [values[1],values[2],values[3]]
                 if swapyz:
                     values[1], values[2] = values[2], values[1]
-                    self.normals.append(v)
+                self.normals.append(v)
             elif values[0] == 'vt':
                 self.texcoords.append([values[1],values[2]])
             #elif values[0] in ('usemtl', 'usemat'):
