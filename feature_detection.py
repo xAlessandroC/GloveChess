@@ -28,7 +28,7 @@ def detect(img_train, img_query, camera_parameters, matchVis=False):
     # Keeping only good matches as per Lowe's ratio test.
     good = []
     for m,n in matches:
-        if m.distance < 0.94*n.distance:
+        if m.distance < 0.99*n.distance:
             good.append(m)
 
     # If we have at least 10 matches we find the box of the object
@@ -40,6 +40,7 @@ def detect(img_train, img_query, camera_parameters, matchVis=False):
         # Calculating homography based on correspondences
         M, mask = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC, 5.0)
         projection_m = projection_matrix(camera_parameters,M)
+        # print("Matrix: ", M)
         # print("PROJECTION MATRIX: ", projection_m)
 
         # Matches mask for visualization of only matches used by RANSAC
@@ -55,6 +56,7 @@ def detect(img_train, img_query, camera_parameters, matchVis=False):
     else:
         print( "Not enough matches are found - {}/{}".format(len(good), MIN_MATCH_COUNT) )
         matchesMask = None
+        projection_m = None
 
     # Drawing matches
     if(matchVis):
@@ -65,7 +67,7 @@ def detect(img_train, img_query, camera_parameters, matchVis=False):
 
 
         img3 = cv2.drawMatches(img_query,kp_query,img_train,kp_train,good,None,**draw_params)
-        img_train = cv2.resize(img_train,(800,600))
+        img_train = cv2.resize(img3,(800,600))
 
         cv2.imshow("",img_train)
         cv2.waitKey(0)
@@ -84,7 +86,7 @@ def projection_matrix(camera_parameters, homography):
     compute the 3D projection matrix
     """
     # Compute rotation along the x and y axis as well as the translation
-    #homography = homography * (-1)
+    homography = homography * (-1)
     rot_and_transl = np.dot(np.linalg.inv(camera_parameters), homography)
     col_1 = rot_and_transl[:, 0]
     col_2 = rot_and_transl[:, 1]
@@ -102,5 +104,16 @@ def projection_matrix(camera_parameters, homography):
     rot_2 = np.dot(c / np.linalg.norm(c, 2) - d / np.linalg.norm(d, 2), 1 / math.sqrt(2))
     rot_3 = np.cross(rot_1, rot_2)
     # finally, compute the 3D projection matrix from the model to the current frame
-    projection = np.stack((rot_1, rot_2, rot_3, translation)).T
+    projection = np.stack((rot_1, rot_2, rot_3, translation), axis = 1)
+    return np.dot(camera_parameters, projection)
+
+def projection_matrix_2(camera_parameters, homography):
+
+    homography = homography * (-1)
+    rot_and_transl = np.dot(np.linalg.inv(camera_parameters), homography)
+    col_1 = rot_and_transl[:, 0]
+    col_2 = rot_and_transl[:, 1]
+    col_3 = rot_and_transl[:, 2]
+    rot_3 = np.cross(col_1,col_2)
+    projection = np.stack((col_1, col_2, rot_3, col_3), axis = 1)
     return np.dot(camera_parameters, projection)
