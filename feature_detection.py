@@ -2,18 +2,22 @@ import numpy as np
 import cv2
 import math
 from matplotlib import pyplot as plt
+import time
 
-def detect(img_train, img_query, camera_parameters, matchVis=False):
+from paths import *
+
+def detect(img_train, camera_parameters, matchVis=False):
+    global kp_query, des_query
 
     # Creating SIFT object
     sift = cv2.xfeatures2d.SIFT_create()
 
     # Detecting Keypoints in the two images
-    kp_query = sift.detect(img_query)
+    # kp_query = sift.detect(img_query)
     kp_train = sift.detect(img_train)
 
     # Computing the descriptors for each keypoint
-    kp_query, des_query = sift.compute(img_query, kp_query)
+    # kp_query, des_query = sift.compute(img_query, kp_query)
     kp_train, des_train = sift.compute(img_train, kp_train)
 
     # Initializing the matching algorithm
@@ -34,14 +38,13 @@ def detect(img_train, img_query, camera_parameters, matchVis=False):
     # If we have at least 10 matches we find the box of the object
     MIN_MATCH_COUNT = 10
     if len(good)>=MIN_MATCH_COUNT:
+        print("Enough match found!")
         src_pts = np.float32([ kp_query[m.queryIdx].pt for m in good ]).reshape(-1,1,2)
         dst_pts = np.float32([ kp_train[m.trainIdx].pt for m in good ]).reshape(-1,1,2)
 
         # Calculating homography based on correspondences
         M, mask = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC, 5.0)
         projection_m = projection_matrix(camera_parameters,M)
-        # print("Matrix: ", M)
-        # print("PROJECTION MATRIX: ", projection_m)
 
         # Matches mask for visualization of only matches used by RANSAC
         matchesMask = mask.ravel().tolist()
@@ -107,13 +110,22 @@ def projection_matrix(camera_parameters, homography):
     projection = np.stack((rot_1, rot_2, rot_3, translation), axis = 1)
     return np.dot(camera_parameters, projection)
 
-def projection_matrix_2(camera_parameters, homography):
+# def projection_matrix_2(camera_parameters, homography):
+#
+#     homography = homography * (-1)
+#     rot_and_transl = np.dot(np.linalg.inv(camera_parameters), homography)
+#     col_1 = rot_and_transl[:, 0]
+#     col_2 = rot_and_transl[:, 1]
+#     col_3 = rot_and_transl[:, 2]
+#     rot_3 = np.cross(col_1,col_2)
+#     projection = np.stack((col_1, col_2, rot_3, col_3), axis = 1)
+#     return np.dot(camera_parameters, projection)
 
-    homography = homography * (-1)
-    rot_and_transl = np.dot(np.linalg.inv(camera_parameters), homography)
-    col_1 = rot_and_transl[:, 0]
-    col_2 = rot_and_transl[:, 1]
-    col_3 = rot_and_transl[:, 2]
-    rot_3 = np.cross(col_1,col_2)
-    projection = np.stack((col_1, col_2, rot_3, col_3), axis = 1)
-    return np.dot(camera_parameters, projection)
+
+#Elaboro il modello una volta sola
+img_query = model_image = cv2.imread(model_path,0)
+
+print("Loading model sift analysis...")
+sift = cv2.xfeatures2d.SIFT_create()
+kp_query = sift.detect(img_query)
+kp_query, des_query = sift.compute(img_query, kp_query)

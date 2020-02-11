@@ -1,0 +1,5 @@
+test_path = "resources/marker/image_1.jpg"
+video_path = "resources/marker/videooh_2.mp4"
+model_path = "resources/marker/model.png"
+# obj_path = "resources/chess_models/Alfiere_Bianco/12929_WoodenChessBishopSideA_v1_l3.obj"
+obj_path = "resources/chess_models/Random/String.obj"
