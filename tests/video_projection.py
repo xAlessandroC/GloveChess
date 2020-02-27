@@ -24,10 +24,10 @@ for frame in frames:
 
     img, projection_m = detect(test_image,camera_matrix,0)
     # to_render = cv2.cvtColor(img,cv2.COLOR_GRAY2RGB)
-    start = time.time()
-    rendered_img = render(frame, obj, projection_m, model_image)
-    end = time.time()
-    print("Rendering time: ", end-start)
+    rendered_img = frame
+    if projection_m.shape[0] != 0:
+        rendered_img = render(img, obj, projection_m, model_image)
+
     cv2.imshow("",rendered_img)
     if cv2.waitKey(1) == ord('q'):
         break

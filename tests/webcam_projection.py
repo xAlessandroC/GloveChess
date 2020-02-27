@@ -6,12 +6,12 @@ import pywavefront
 from pywavefront import visualization
 import time
 
-from calibration import *
-from feature_detection import *
-from rendering import *
-from video import *
-from paths import *
-from objLoader import *
+from utils.calibration import *
+from utils.feature_detection import *
+from utils.rendering import *
+from utils.video import *
+from utils.paths import *
+from utils.objLoader import *
 
 camera_matrix, dist_coefs, rvecs, tvecs = calibrate()
 
@@ -31,13 +31,10 @@ while cap.isOpened():
 
     img, projection_m = detect(test_image,camera_matrix,0)
     # to_render = cv2.cvtColor(img,cv2.COLOR_GRAY2RGB)
-    start = time.time()
-    rendered_img = render(frame, obj, projection_m, model_image)
-    end = time.time()
-    print("Rendering time: ", end-start)
-    start = time.time()
+    rendered_img = img
+    if projection_m.shape[0] != 0:
+        rendered_img = render(img, obj, projection_m, model_image)
+
     cv2.imshow("",rendered_img)
     if cv2.waitKey(1) == ord('q'):
         break
-    end = time.time()
-    print("Showing time: ", end-start)

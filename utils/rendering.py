@@ -25,22 +25,23 @@ import time
 #     return img
 
 ##Versione per objLoader
-def render (img, obj, projection_matrix, model):
+def render (img, obj, projection_matrix, model, center=[0,0]):
 
     vertices = obj.vertices
-    scale_matrix = np.eye(3) * 2
-    h, w = model.shape
-    # rot = getRotationMatrix()
+    scale_matrix = np.eye(3) * 10
+    # h, w = model.shape
+    rot = getRotationMatrix()
 
     for face in obj.faces:
         points = np.array([vertices[vertex - 1] for vertex in face[0]])
         np_3d_points = np.asarray(points).astype(np.float32)
         np_3d_points = np.dot(np_3d_points, scale_matrix)
-        # np_3d_points = np.dot(np_3d_points, rot)
-        # np_3d_points = np.array([[p[0] + w / 4, p[1] + h / 4, p[2]] for p in np_3d_points])
+        np_3d_points = np.dot(np_3d_points, rot)
+        np_3d_points = np.array([[p[0] + center[0], p[1] + center[1], p[2]] for p in np_3d_points])
         _2d_points = cv2.perspectiveTransform(np_3d_points.reshape(-1, 1, 3), projection_matrix)
         _2d_points = np.asarray(_2d_points).astype(np.int32)
-        cv2.fillConvexPoly(img, _2d_points, (137, 27, 211))
+        # _2d_points = np.array([[p[0,0] + center[0], p[0,1] + center[1]] for p in _2d_points])
+        cv2.fillConvexPoly(img, _2d_points, (255, 0, 0))
 
     return img
 
@@ -65,9 +66,9 @@ def show_axis (img, projection_matrix):
 
 
 def getRotationMatrix():
-    a = 77
-    b = 180
-    c = 0
+    a = math.radians(90)        ##Piano del tavolo
+    b = math.radians(150)
+    c = math.radians(120)
     rot_matrix_X = np.array([[1,0,0],
                            [0,math.cos(a),-math.sin(a)],
                            [0,math.sin(a),math.cos(a)]])

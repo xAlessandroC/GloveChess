@@ -1,6 +1,7 @@
 import numpy as np
 import cv2
 import os
+from matplotlib import pyplot as plt
 
 square_size = 26.5
 pattern_size = (8,5)
@@ -21,6 +22,13 @@ def processImage(fn, pattern_points):
         #Image Corners
         cv2.cornerSubPix(img, corners, (5, 5), (-1, -1), term)
 
+    ##VISUALIZATION
+    # vis = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
+    # cv2.drawChessboardCorners(vis, pattern_size, corners, found)
+    #
+    # plt.imshow(vis)
+    # plt.show()
+
     if not found:
         print('chessboard not found')
         return None
@@ -30,8 +38,8 @@ def processImage(fn, pattern_points):
 
 def calibration():
 
-    dirname = "resources/calibration/"
-    img_names = [dirname + str(i) + ".jpg" for i in range(13)]
+    dirname = "resources/calibration/webcam/"
+    img_names = [dirname + str(i) + ".jpg" for i in range(19)]
 
     indices = np.indices(pattern_size, dtype=np.float32)
     indices *= square_size
@@ -55,6 +63,7 @@ def calibration():
 
     # Calibrating Camera
     rms, camera_matrix, dist_coefs, rvecs, tvecs = cv2.calibrateCamera(obj_points, img_points, (w, h), None, None)
+    print("Calibrazione completed: RMS =",rms)
     return (rms, camera_matrix, dist_coefs, rvecs, tvecs)
 
 

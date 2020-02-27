@@ -4,7 +4,8 @@ import math
 from matplotlib import pyplot as plt
 import time
 
-from paths import *
+from utils.paths import *
+from stabilization.stabilizer import *
 
 def detect(img_train, camera_parameters, matchVis=False):
     global kp_query, des_query
@@ -32,7 +33,7 @@ def detect(img_train, camera_parameters, matchVis=False):
     # Keeping only good matches as per Lowe's ratio test.
     good = []
     for m,n in matches:
-        if m.distance < 0.99*n.distance:
+        if m.distance < 0.90*n.distance:
             good.append(m)
 
     # If we have at least 10 matches we find the box of the object
@@ -56,13 +57,24 @@ def detect(img_train, camera_parameters, matchVis=False):
 
         # Drawing bounding box
         img_train = cv2.polylines(img_train,[np.int32(dst)],True,255,3, cv2.LINE_AA)
+
+        #Drawing center
+        print(dst[0,0])
+        c_1 = int(( dst[0,0,0] + dst[2,0,0] ) / 2)
+        c_2 = int(( dst[0,0,1] + dst[2,0,1] ) / 2)
+        img_train = cv2.circle(img_train,(c_1,c_2), 20, (255,0,0), 5)
+
+        projection_m = stabilized_ppm(projection_m,[c_1,c_2])
     else:
         print( "Not enough matches are found - {}/{}".format(len(good), MIN_MATCH_COUNT) )
         matchesMask = None
-        projection_m = None
+        projection_m = np.empty((0,0))
+        # projection_m = getLastPPM()
+        c_1 = 0
+        c_2 = 0
 
     # Drawing matches
-    if(matchVis):
+    if matchVis :
         draw_params = dict(matchColor = (0,255,0),
                            singlePointColor = None,
                            matchesMask = matchesMask, # draw only inliers
@@ -79,7 +91,7 @@ def detect(img_train, camera_parameters, matchVis=False):
 
 
 def visualizeKeyPoints(image, kp):
-    img_visualization = cv2.drawKeypoints(img_train,kp_train,None,flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+    img_visualization = cv2.drawKeypoints(image,kp,None,flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
 
     return img_visualization
 
@@ -109,18 +121,6 @@ def projection_matrix(camera_parameters, homography):
     # finally, compute the 3D projection matrix from the model to the current frame
     projection = np.stack((rot_1, rot_2, rot_3, translation), axis = 1)
     return np.dot(camera_parameters, projection)
-
-# def projection_matrix_2(camera_parameters, homography):
-#
-#     homography = homography * (-1)
-#     rot_and_transl = np.dot(np.linalg.inv(camera_parameters), homography)
-#     col_1 = rot_and_transl[:, 0]
-#     col_2 = rot_and_transl[:, 1]
-#     col_3 = rot_and_transl[:, 2]
-#     rot_3 = np.cross(col_1,col_2)
-#     projection = np.stack((col_1, col_2, rot_3, col_3), axis = 1)
-#     return np.dot(camera_parameters, projection)
-
 
 #Elaboro il modello una volta sola
 img_query = model_image = cv2.imread(model_path,0)
