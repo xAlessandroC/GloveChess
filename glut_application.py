@@ -17,15 +17,15 @@ from aruco import *
 
 ###############################
 # GLOBAL VARIABLES
-width = 800
-height = 600
+width = 1280
+height = 720
 texture_background = None
 chess_piece = None
 webcam = cv2.VideoCapture(0)
 camera_matrix, dist_coefs, rvecs, tvecs = calibrate()
 
 znear = 0.1
-zfar = 100.0
+zfar = 10000.0
 
 ###############################
 
@@ -41,13 +41,18 @@ def init_gl():
     glShadeModel(GL_SMOOTH)
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity()
-    gluPerspective(33.7, 1.3, 0.1, 100.0)   #Cambiare all'occorrenza
-    # gluPerspective(60,1.78,0.1,1000.0)   #Cambiare all'occorrenza
+    gluPerspective(40.34, 1.78, znear, zfar)   #Cambiare all'occorrenza
+    glViewport(0,0,width,height)
+
+    # ppm = getOpenglProjectionMatrix(camera_matrix, znear, zfar, width, height)
+    # # glMatrixMode(GL_PROJECTION)
+    # # glPushMatrix()
+    # glLoadMatrixf(ppm)
 
     glMatrixMode(GL_MODELVIEW)
 
     # assign shapes
-    chess_piece = OBJ(obj_path)
+    chess_piece = OBJ(obj_path, True)
 
     # assign texture
     glEnable(GL_TEXTURE_2D)
@@ -88,18 +93,19 @@ def draw_background(image):
     glTranslatef(0.0,0.0,-10.0)
 
     glBegin(GL_QUADS)
-    glTexCoord2f(0.0, 1.0); glVertex3f(-4.0, -3.0, 0.0)
-    glTexCoord2f(1.0, 1.0); glVertex3f( 4.0, -3.0, 0.0)
-    glTexCoord2f(1.0, 0.0); glVertex3f( 4.0,  3.0, 0.0)
-    glTexCoord2f(0.0, 0.0); glVertex3f(-4.0,  3.0, 0.0)
+    glTexCoord2f(0.0, 1.0); glVertex3f(-4.0, -3.0, 3.0)
+    glTexCoord2f(1.0, 1.0); glVertex3f( 4.0, -3.0, 3.0)
+    glTexCoord2f(1.0, 0.0); glVertex3f( 4.0,  3.0, 3.0)
+    glTexCoord2f(0.0, 0.0); glVertex3f(-4.0,  3.0, 3.0)
     glEnd( )
 
     glPopMatrix()
 
-def draw_obj(rvec, tvec, center):
+def draw_obj(rvec, tvec, center, p_k):
 
     ### OBTAINING PROJECTION MATRIX
     view_matrix = getCorrectPPM(rvec,tvec)
+    # view_matrix = tryThis(p_k)
 
     ###############################
     lightfv = ctypes.c_float * 4
@@ -133,26 +139,26 @@ def display():
 
     image = getNextFrame()
 
-    rvec, tvec, frame, center= detect(image, camera_matrix, dist_coefs)
+    rvec, tvec, frame, center, p_k = detect(image, camera_matrix, dist_coefs, chess_piece)
 
     draw_background(frame)
 
     if len(rvec) != 0 and len(tvec) != 0:
-        draw_obj(rvec, tvec, center)
+        draw_obj(rvec, tvec, center, p_k)
 
     glutSwapBuffers()
 
 
 def reshape():
-    if h == 0:
-      h = 1
+    if height == 0:
+      height = 1
 
-    glViewport(0, 0, w, h)
+    glViewport(0, 0, width, height)
     glMatrixMode(GL_PROJECTION)
 
     glLoadIdentity()
 
-    if w <= h:
+    if width <= height:
       glOrtho(-nRange, nRange, -nRange*h/w, nRange*h/w, -nRange, nRange)
     else:
       glOrtho(-nRange*w/h, nRange*w/h, -nRange, nRange, -nRange, nRange)
@@ -167,7 +173,7 @@ def init_application():
     glutInit()
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH)
     glutInitWindowSize(width, height)
-    glutInitWindowPosition(100, 100)
+    glutInitWindowPosition(0, 0)
     glutCreateWindow("AR Chess")
 
     glutDisplayFunc(display)

@@ -6,8 +6,6 @@ from utils.paths import *
 from utils.feature_detection import *
 from utils.rendering import *
 
-
-
 id = 50
 aruco_dict = aruco.Dictionary_get(aruco.DICT_6X6_250)
 img = aruco.drawMarker(aruco_dict, id, 200)
@@ -16,7 +14,7 @@ model = cv2.imread("resources/marker/aruco/model_50.png",0)
 h,w = model.shape
 
 
-def detect(frame, camera_matrix, dist_coefs):
+def detect(frame, camera_matrix, dist_coefs, obj):
     frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     aruco_dict = aruco.Dictionary_get(aruco.DICT_6X6_250)
     parameters =  aruco.DetectorParameters_create()
@@ -41,9 +39,10 @@ def detect(frame, camera_matrix, dist_coefs):
         center = [center_x, center_y]
 
         # rendered_img = cv2.circle(rendered_img,center,5,(255,0,0),20)
-        # dst_pts = np.array(corners, dtype="float32").reshape(-1,1,2)
-        # M, mask = cv2.findHomography(src_pts, dst_pts)
-        # projection_m = projection_matrix(camera_matrix,M)
+        dst_pts = np.array(corners, dtype="float32").reshape(-1,1,2)
+        M, mask = cv2.findHomography(src_pts, dst_pts)
+        projection_m = projection_matrix(camera_matrix,M)
         # _2d_points = show_axis(rendered_img,projection_m)
+        # rendered_img = renderCube(rendered_img, rvec, tvec, camera_matrix, dist_coefs)
 
-    return (rvec, tvec, rendered_img, center)
+    return (rvec, tvec, rendered_img, center, projection_m)

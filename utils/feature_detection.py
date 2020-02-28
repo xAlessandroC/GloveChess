@@ -62,7 +62,7 @@ def detect(img_train, camera_parameters, matchVis=False):
         print(dst[0,0])
         c_1 = int(( dst[0,0,0] + dst[2,0,0] ) / 2)
         c_2 = int(( dst[0,0,1] + dst[2,0,1] ) / 2)
-        img_train = cv2.circle(img_train,(c_1,c_2), 20, (255,0,0), 5)
+        # img_train = cv2.circle(img_train,(c_1,c_2), 20, (255,0,0), 5)
 
         projection_m = stabilized_ppm(projection_m,[c_1,c_2])
     else:
@@ -121,6 +121,7 @@ def projection_matrix(camera_parameters, homography):
     # finally, compute the 3D projection matrix from the model to the current frame
     projection = np.stack((rot_1, rot_2, rot_3, translation), axis = 1)
     return np.dot(camera_parameters, projection)
+    # return projection
 
 #Elaboro il modello una volta sola
 img_query = model_image = cv2.imread(model_path,0)
