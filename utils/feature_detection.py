@@ -120,8 +120,8 @@ def projection_matrix(camera_parameters, homography):
     rot_3 = np.cross(rot_1, rot_2)
     # finally, compute the 3D projection matrix from the model to the current frame
     projection = np.stack((rot_1, rot_2, rot_3, translation), axis = 1)
-    return np.dot(camera_parameters, projection)
-    # return projection
+    # return np.dot(camera_parameters, projection)
+    return projection
 
 #Elaboro il modello una volta sola
 img_query = model_image = cv2.imread(model_path,0)

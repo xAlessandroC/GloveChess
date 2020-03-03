@@ -8,27 +8,27 @@ from utils.feature_detection import *
 from utils.rendering import *
 from utils.video import *
 from utils.paths import *
-from utils.objLoader import *
+from utils.objLoader_simple import *
+from utils.webcam import *
 
-from aruco import *
+from aruco_markerdetection.aruco import *
 
 camera_matrix, dist_coefs, rvecs, tvecs = calibrate()
 obj = OBJ(obj_path)
-cap = cv2.VideoCapture(0)
-while cap.isOpened():
-    ret, frame = cap.read()
+cap = Webcam(0)
+while True:
+    frame = cap.getNextFrame()
 
-    if not ret or frame is None:
-        # Release the Video if ret is false
-        cap.release()
-        print("Released Video Resource")
+    if frame is None:
         break
 
-    rvec, tvec, frame, center, projection = detect(frame, camera_matrix, dist_coefs, None)
+    rvecs, tvecs, frame, center, projection = detect(frame, camera_matrix, dist_coefs, None)
 
-    if len(rvec) != 0 and len(tvec) != 0:
-        # frame = renderCube(frame, rvec, tvec, camera_matrix, dist_coefs)
-        frame = renderObj(frame, obj, rvec, tvec, camera_matrix, dist_coefs)
+    if len(rvecs) != 0 and len(tvecs) != 0:
+        rvec = rvecs[0]
+        tvec = tvecs[0]
+        frame = renderCube(frame, rvec, tvec, camera_matrix, dist_coefs)
+        # frame = renderObj(frame, obj, rvec, tvec, camera_matrix, dist_coefs)
 
     frame = cv2.resize(frame, (1280, 720))
 

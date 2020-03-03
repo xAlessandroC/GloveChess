@@ -43,7 +43,7 @@ def renderObj(img, obj, rvec, tvec, camera_matrix, dist_coefs):
     return img
 
 def renderCube(img, rvec, tvec, camera_matrix, dist_coefs):
-    l = 0.07
+    l = 7
     _3d_corners = np.float32([[0,0,0], [0,l,0], [l,l,0], [l,0,0], [0,0,l], [0,l,l], [l,l,l], [l,0,l]])
     cube_corners_2d,_ = cv2.projectPoints(_3d_corners,rvec,tvec,camera_matrix,dist_coefs)
     red = (0,0,255) #red (in BGR)
