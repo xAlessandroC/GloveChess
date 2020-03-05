@@ -1,7 +1,6 @@
 import cv2
 import numpy as np
 import os
-from utils.paths import *
 
 # def translate_prova(x,y):
 #
@@ -38,15 +37,18 @@ from utils.paths import *
 def translate(vertices, x, y):
 
     np_vertices = np.asarray(vertices).astype(np.float32)
-
+    mean = np.mean(np_vertices,axis=0)
+    print("MEAN:", mean)
+    print("MOVE:",(x-mean[0]),(y-mean[1]))
+    
     res = []
     for vertex in np_vertices:
         old_first = vertex[0]
         old_second = vertex[1]
 
         ##TRANSLATION
-        new_first = old_first + x
-        new_second = old_second + y
+        new_first = old_first + x - mean[0]
+        new_second = old_second + y - mean[1]
 
         res.append([new_first,new_second,vertex[2]])
 
