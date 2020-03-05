@@ -4,7 +4,7 @@ import math
 from matplotlib import pyplot as plt
 import time
 
-from utils.paths import *
+from utils.config import *
 from stabilization.stabilizer import *
 
 def detect(img_train, camera_parameters, matchVis=False):

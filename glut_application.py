@@ -6,33 +6,19 @@ import numpy as np
 import time
 from utils.calibration import *
 from utils.objloader_complete import *
-from utils.paths import *
+import utils.config as config
 from utils.webcam import *
 from aruco_markerdetection.aruco import *
+from utils.utility import *
 from findCenters import *
 
 import ctypes
 
+###############################
+# GLOBAL VARIABLES
 texture_background = None
-
-cubes = []
-num = 32
-
-# Set AR
-aruco = cv2.aruco
-dictionary = aruco.Dictionary_get(aruco.DICT_6X6_250)
-
-#load camera parameter
-camera_matrix, dist_coefs, rvecs, tvecs = calibrate()
-webcam = Webcam(0)
-
-alpha = camera_matrix[0][0]
-beta = camera_matrix[1][1]
-cx = camera_matrix[0][2]
-cy = camera_matrix[1][2]
-
 chess_piece = None
-chess_piece2 = None
+webcam = Webcam(0)
 
 windowWidth = 1280
 windowHeight = 720
@@ -40,12 +26,23 @@ windowHeight = 720
 f = 1000.0
 n = 1.0
 
-def draw():
+# camera_matrix, dist_coefs, rvecs, tvecs = calibrate()
 
+alpha = None
+beta = None
+cx = None
+cy = None
+
+models = []
+num = 1
+###############################
+def keyboard(key, x, y):
+    sys.exit()
+
+def draw():
     img = webcam.getNextFrame()
 
-    # Aruco
-    rvec, tvec, img, center, p_k = detect(img, camera_matrix, dist_coefs, chess_piece)
+    rvec, tvec, img, center, p_k = detect(img, config.camera_matrix, config.dist_coefs, chess_piece)
     img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB) #BGR-->RGB
     h, w = img.shape[:2]
 
@@ -120,9 +117,8 @@ def draw():
         glTranslatef(0, 0, -0.5)
         glRotatef(-180, 1.0, 0.0, 0.0)
         glCallList(chess_piece.gl_list)
-        # glCallList(chess_piece2.gl_list)
         for i in range(num):
-            glCallList(cubes[i].gl_list)
+            glCallList(models[i].gl_list)
         glPopMatrix()
 
     glPopMatrix()
@@ -130,12 +126,15 @@ def draw():
     glFlush();
     glutSwapBuffers()
 
+###############################
+# INIT
+def initParam():
+    global camera_matrix, alpha, beta, cx, cy
 
-def compositeArray(rvec, tvec):
-    v = np.c_[rvec, tvec.T]
-    #print(v)
-    v_ = np.r_[v, np.array([[0,0,0,1]])]
-    return v_
+    alpha = config.camera_matrix[0][0]
+    beta = config.camera_matrix[1][1]
+    cx = config.camera_matrix[0][2]
+    cy = config.camera_matrix[1][2]
 
 def init():
     global chess_piece, texture_background, chess_piece2, cubes
@@ -148,18 +147,16 @@ def init():
 
     centers = findCenters()
 
-    chess_piece = OBJ(obj_path)
-    # chess_piece2 = OBJ(obj_path2,translation=tuple(centers[63]))
+    chess_piece = OBJ(config.obj_path)
     for i in range(num):
-        cubes.append(OBJ(obj_path2,translation=tuple(centers[i])))
+        models.append(OBJ(config.obj_path2,translation=tuple(centers[i+12])))
 
     glEnable(GL_TEXTURE_2D)
     texture_background = glGenTextures(1)
 
-def keyboard(key, x, y):
-    sys.exit()
-
-if __name__ == "__main__":
+###############################
+# APPLICATION
+def start_application():
     # glutInitWindowPosition(0, 0);
     # glutInitWindowSize(windowWidth, windowHeight);
     glutInit(sys.argv)
@@ -172,6 +169,7 @@ if __name__ == "__main__":
     glutIdleFunc(draw)
 
     glutFullScreen()
+    initParam()
     init()
 
     glutMainLoop()
