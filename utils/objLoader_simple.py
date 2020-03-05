@@ -1,4 +1,4 @@
-class OBJ:
+class OBJSimple:
     def __init__(self, filename, swapyz=False):
         """Loads a Wavefront OBJ file. """
         self.vertices = []

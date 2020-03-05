@@ -9,10 +9,14 @@ from utils.objloader_complete import *
 from utils.paths import *
 from utils.webcam import *
 from aruco_markerdetection.aruco import *
+from findCenters import *
 
 import ctypes
 
 texture_background = None
+
+cubes = []
+num = 32
 
 # Set AR
 aruco = cv2.aruco
@@ -28,6 +32,7 @@ cx = camera_matrix[0][2]
 cy = camera_matrix[1][2]
 
 chess_piece = None
+chess_piece2 = None
 
 windowWidth = 1280
 windowHeight = 720
@@ -95,7 +100,7 @@ def draw():
     ## draw cube
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
-    glPushMatrix()  
+    glPushMatrix()
 
     # glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, [0.0,0.0,1.0,1.0])
     lightfv = ctypes.c_float * 4
@@ -113,7 +118,11 @@ def draw():
         glLoadMatrixd(m.T)
 
         glTranslatef(0, 0, -0.5)
+        glRotatef(-180, 1.0, 0.0, 0.0)
         glCallList(chess_piece.gl_list)
+        # glCallList(chess_piece2.gl_list)
+        for i in range(num):
+            glCallList(cubes[i].gl_list)
         glPopMatrix()
 
     glPopMatrix()
@@ -129,7 +138,7 @@ def compositeArray(rvec, tvec):
     return v_
 
 def init():
-    global chess_piece, texture_background
+    global chess_piece, texture_background, chess_piece2, cubes
     #glClearColor(0.7, 0.7, 0.7, 0.7)
     glClearColor(0.0, 0.0, 0.0, 1.0)
     glEnable(GL_DEPTH_TEST)
@@ -137,7 +146,12 @@ def init():
     glEnable(GL_LIGHTING)
     glEnable(GL_LIGHT0)
 
+    centers = findCenters()
+
     chess_piece = OBJ(obj_path)
+    # chess_piece2 = OBJ(obj_path2,translation=tuple(centers[63]))
+    for i in range(num):
+        cubes.append(OBJ(obj_path2,translation=tuple(centers[i])))
 
     glEnable(GL_TEXTURE_2D)
     texture_background = glGenTextures(1)

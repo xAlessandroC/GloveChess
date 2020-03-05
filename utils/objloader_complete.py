@@ -1,5 +1,6 @@
 import pygame
 from OpenGL.GL import *
+from movepiece import *
 
 def MTL(filename):
     contents = {}
@@ -15,7 +16,11 @@ def MTL(filename):
         elif values[0] == 'map_Kd':
             # load the texture referred to by this declaration
             mtl[values[0]] = values[1]
-            surf = pygame.image.load("resources/chess_models/Alfiere_Bianco/" + mtl['map_Kd'])
+            path = filename
+            path = path[::-1]
+            path = path.split("/",1)[1]
+            path = path[::-1] + "/"
+            surf = pygame.image.load(path + mtl['map_Kd'])
             image = pygame.image.tostring(surf, 'RGBA', 1)
             ix, iy = surf.get_rect().size
             texid = mtl['texture_Kd'] = glGenTextures(1)
@@ -31,7 +36,7 @@ def MTL(filename):
     return contents
 
 class OBJ:
-    def __init__(self, filename, swapyz=False):
+    def __init__(self, filename, swapyz=False, translation=(0,0)):
         """Loads a Wavefront OBJ file. """
         self.vertices = []
         self.normals = []
@@ -58,7 +63,12 @@ class OBJ:
             elif values[0] in ('usemtl', 'usemat'):
                 material = values[1]
             elif values[0] == 'mtllib':
-                self.mtl = MTL("resources/chess_models/Alfiere_Bianco/" + values[1])
+                path = filename
+                path = path[::-1]
+                path = path.split("/",1)[1]
+                path = path[::-1] + "/"
+                print("PATH:",path)
+                self.mtl = MTL(path + values[1])
             elif values[0] == 'f':
                 face = []
                 texcoords = []
@@ -76,6 +86,8 @@ class OBJ:
                         norms.append(0)
                 self.faces.append((face, norms, texcoords, material))
 
+
+        self.vertices = translate(self.vertices, translation[0], translation[1])
         self.gl_list = glGenLists(1)
         glNewList(self.gl_list, GL_COMPILE)
         glEnable(GL_TEXTURE_2D)

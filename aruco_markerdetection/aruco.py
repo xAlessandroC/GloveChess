@@ -31,7 +31,7 @@ def detect(frame, camera_matrix, dist_coefs, obj):
         rvecs, tvecs, _ = aruco.estimatePoseSingleMarkers(corners, 8.0, camera_matrix, dist_coefs)
         rvec = rvecs[0]
         tvec = tvecs[0]
-        rendered_img = aruco.drawAxis(rendered_img, camera_matrix, dist_coefs, rvec, tvec, 6.0)
+        rendered_img = aruco.drawAxis(rendered_img, camera_matrix, dist_coefs, rvec, tvec, 10.0)
 
         # c = corners[0][0]
         # center_x = c[:, 0].mean()
