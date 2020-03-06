@@ -10,12 +10,6 @@ class QueenChecker(Checker):
 
         chessboard = Chessboard.getInstance()
 
-        currentTurn = Player(chessboard.get_turn()[1]).name
-        selectedPiece = chessboard.from_index_to_piece(fromCell)
-
-        if selectedPiece[0] != currentTurn[0] :
-            raise Exception("[WrongTurnException]: Non stai muovendo un tuo pezzo")
-
         fromCell_matrix = chessboard.from_chessboard_to_matrix(fromCell)
         toCell_matrix = chessboard.from_chessboard_to_matrix(toCell)
 

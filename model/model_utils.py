@@ -22,7 +22,7 @@ def getInitialConfiguration():
     configuration[0,0] = Piece.W_ROOK;      configuration[1,0] = Piece.W_PAWN;
     configuration[0,1] = Piece.W_KNIGHT;    configuration[1,1] = Piece.W_PAWN;
     configuration[0,2] = Piece.W_BISHOP;    configuration[1,2] = Piece.W_PAWN;
-    configuration[3,4] = Piece.W_QUEEN;     configuration[1,3] = Piece.W_PAWN;
+    configuration[0,3] = Piece.W_QUEEN;     configuration[1,3] = Piece.W_PAWN;
     configuration[0,4] = Piece.W_KING;      configuration[1,4] = Piece.W_PAWN;
     configuration[0,5] = Piece.W_BISHOP;    configuration[1,5] = Piece.W_PAWN;
     configuration[0,6] = Piece.W_KNIGHT;    configuration[1,6] = Piece.W_PAWN;

@@ -16,6 +16,8 @@ def checkAndExecuteMove(fromCell, toCell):
     if selectedPiece[0] != currentTurn[0] :
         raise Exception("[WrongTurnException]: Non stai muovendo un tuo pezzo")
 
+    if fromCell == toCell :
+        raise Exception("[WrongMoveException]: Non stai muovendo niente")
 
     #Controllo che il pezzo rispetti le proprie regole
     checkerName = selectedPiece[2:].lower() + "Checker"
@@ -28,8 +30,6 @@ def checkAndExecuteMove(fromCell, toCell):
         chessboard.update(fromCell,toCell)
         return True
 
-    return False
-
 
 Chessboard.getInstance()
-print(checkAndExecuteMove("d5","b7"))
+print(checkAndExecuteMove("c2","c1"))
