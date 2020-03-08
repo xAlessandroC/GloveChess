@@ -1,4 +1,4 @@
-from Chessboard import *
+from chessboard import *
 from model_utils import *
 from checker import *
 import math
@@ -15,35 +15,37 @@ class PawnChecker(Checker):
 
         currentTurn = Player(chessboard.get_turn()[1]).name
 
-        fromCell_matrix = chessboard.from_chessboard_to_matrix(fromCell)
-        toCell_matrix = chessboard.from_chessboard_to_matrix(toCell)
+        fromCell_matrix = from_chessboard_to_matrix(fromCell)
+        toCell_matrix = from_chessboard_to_matrix(toCell)
 
         limit = 1
-        if currentTurn == "WHITE" and fromCell in self.__W_startPosition:
-            limit = 2
+        direction = 0
+        if currentTurn == "WHITE":
+            direction = 1
+            if fromCell in self.__W_startPosition:
+                limit = 2
 
-        if currentTurn == "BLACK" and fromCell in self.__B_startPosition:
-            limit = 2
+        if currentTurn == "BLACK":
+            direction = -1
+            if fromCell in self.__B_startPosition:
+                limit = 2
 
         print("limit:", limit)
 
-        steps = toCell_matrix[1] - fromCell_matrix[1]
+        steps = (toCell_matrix[1] - fromCell_matrix[1]) * direction
         if steps <= 0:
             raise Exception("[RuleException]: Movimento all'indietro!")
 
         #Movimento
-        fromCell_matrix = chessboard.from_chessboard_to_matrix(fromCell)
-        toCell_matrix = chessboard.from_chessboard_to_matrix(toCell)
-
         if fromCell[0] == toCell[0]:
 
-            if steps != limit:
+            if steps > limit:
                 raise Exception("[RuleException]: Movimento troppo lungo!")
 
             if chessboard.from_index_to_piece(toCell) != Piece.EMPTY.name:
                 raise Exception("[RuleException]: Mangiata verticale!")
 
-            if limit == 2 and chessboard.from_index_to_piece((fromCell_matrix[0],fromCell_matrix[1]+1)) != Piece.EMPTY.name:
+            if limit == 2 and chessboard.from_index_to_piece((fromCell_matrix[0],fromCell_matrix[1]+(1*direction))) != Piece.EMPTY.name:
                 raise Exception("[WrongMovementException]: Non si può scavalcare un pezzo")
 
             return True
@@ -59,4 +61,4 @@ class PawnChecker(Checker):
                 raise Exception("[RuleException]: Movimento diagonale!")
 
 
-        raise Exception("[RuleException]: Mossa errata!")
+        return True

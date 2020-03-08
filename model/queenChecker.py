@@ -1,4 +1,4 @@
-from Chessboard import *
+from chessboard import *
 from model_utils import *
 from checker import *
 import math
@@ -10,8 +10,8 @@ class QueenChecker(Checker):
 
         chessboard = Chessboard.getInstance()
 
-        fromCell_matrix = chessboard.from_chessboard_to_matrix(fromCell)
-        toCell_matrix = chessboard.from_chessboard_to_matrix(toCell)
+        fromCell_matrix = from_chessboard_to_matrix(fromCell)
+        toCell_matrix = from_chessboard_to_matrix(toCell)
 
         ## Movimento sulla stessa riga
         if fromCell[1] == toCell[1]:
