@@ -1,5 +1,5 @@
 from enum import Enum
-from Piece import Piece
+from piece import Piece
 import numpy as np
 
 class Player(Enum):
@@ -14,6 +14,16 @@ conversions = {0 : "a",
                 6 : "g",
                 7 : "h"}
 
+def from_matrix_to_chessboard(m_index):
+    return str(conversions[m_index[0]]) + str(m_index[1] + 1)
+
+def from_chessboard_to_matrix(c_index):
+    keys_list = list(conversions.keys())
+    values_list = list(conversions.values())
+
+    row_index = keys_list[values_list.index(c_index[0])]
+    col_index = int(c_index[1]) - 1
+    return (row_index, col_index)
 
 def getInitialConfiguration():
     configuration = np.full((8,8), Piece.EMPTY)

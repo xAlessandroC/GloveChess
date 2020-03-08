@@ -1,6 +1,6 @@
 import numpy as np
 from model_utils import *
-from Piece import Piece
+from piece import Piece
 
 class Chessboard:
     __instance = None
@@ -41,20 +41,9 @@ class Chessboard:
         else:
             return self.__num_turns, Player.BLACK.value
 
-    def from_matrix_to_chessboard(self, m_index):
-        return str(conversions[m_index[0]]) + str(m_index[1] + 1)
-
-    def from_chessboard_to_matrix(self, c_index):
-        keys_list = list(conversions.keys())
-        values_list = list(conversions.values())
-
-        row_index = keys_list[values_list.index(c_index[0])]
-        col_index = int(c_index[1]) - 1
-        return (row_index, col_index)
-
     def from_index_to_piece(self, index):
         if isinstance(index, str):
-            index = self.from_chessboard_to_matrix(index)
+            index = from_chessboard_to_matrix(index)
 
         row_index = index[0]
         col_index = index[1]
@@ -64,8 +53,11 @@ class Chessboard:
         return Piece(self.__pieces[row_index, col_index]).name
 
     def update(self, fromCell, toCell):
-        fromCell_matrix = self.from_chessboard_to_matrix(fromCell)
-        toCell_matrix = self.from_chessboard_to_matrix(toCell)
+        fromCell_matrix = from_chessboard_to_matrix(fromCell)
+        toCell_matrix = from_chessboard_to_matrix(toCell)
 
         self.__pieces[toCell_matrix[0], toCell_matrix[1]] = self.__pieces[fromCell_matrix[0], fromCell_matrix[1]]
         self.__pieces[fromCell_matrix[0], fromCell_matrix[1]] = Piece.EMPTY
+
+    def getPieces(self):
+        return np.copy(self.__pieces)
