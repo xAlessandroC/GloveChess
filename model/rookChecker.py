@@ -10,8 +10,8 @@ class RookChecker(Checker):
 
         chessboard = Chessboard.getInstance()
 
-        fromCell_matrix = chessboard.from_chessboard_to_matrix(fromCell)
-        toCell_matrix = chessboard.from_chessboard_to_matrix(toCell)
+        fromCell_matrix = from_chessboard_to_matrix(fromCell)
+        toCell_matrix = from_chessboard_to_matrix(toCell)
 
         ## Movimento stessa riga
         if fromCell[1] == toCell[1]:

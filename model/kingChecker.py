@@ -10,15 +10,15 @@ class KingChecker(Checker):
         limit = 1
         chessboard = Chessboard.getInstance()
 
-        fromCell_matrix = chessboard.from_chessboard_to_matrix(fromCell)
-        toCell_matrix = chessboard.from_chessboard_to_matrix(toCell)
+        fromCell_matrix = from_chessboard_to_matrix(fromCell)
+        toCell_matrix = from_chessboard_to_matrix(toCell)
 
         ## Movimento stessa riga
         if fromCell[1] == toCell[1]:
             print("Movimento sulla riga")
 
-            steps = abs(toCell_matrix[1] - fromCell_matrix[1])
-
+            steps = abs(toCell_matrix[0] - fromCell_matrix[0])
+            print(steps)
             if steps != limit:
                 raise Exception("[WrongMovementException]: Movimento troppo lungo!")
 
