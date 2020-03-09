@@ -19,6 +19,8 @@ mode = "debug"
 ## LOAD PIECES
 square = pygame.image.load("../resources/gui/greensquare.png")
 square = pygame.transform.scale(square,(50,50))
+button = pygame.image.load("../resources/gui/button.png")
+button = pygame.transform.scale(button,(40,40))
 board = pygame.image.load("../resources/gui/board.png")
 
 pieces_group = pygame.sprite.Group()
@@ -167,7 +169,7 @@ while carryOn:
                         checkAndExecuteMove(from_,to_)
                     except:
                         pass
-                if mode == "visualize":
+                if mode == "update":
                     chessboard.update(from_, to_)
 
 

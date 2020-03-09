@@ -3,5 +3,9 @@ __pycache__
 *.avi
 *.mp4
 
-resources/
+resources/calibration/
+resources/marker/
+resources/chess/
+resources/chess_models/
+resources/data/
 temp/
