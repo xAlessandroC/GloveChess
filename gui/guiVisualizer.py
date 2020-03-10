@@ -131,6 +131,7 @@ while carryOn:
 
     screen.blit(background,(0,0))
     model = chessboard.getPieces()
+    # model = np.flip(model,1)
 
     for i in range(8):
         for j in range(8):
@@ -141,10 +142,6 @@ while carryOn:
     if pressed and pressed_sprite != None:
         screen.blit(pressed_sprite,(mouse_pos[0]-25,mouse_pos[1]-25))
 
-    if Player(chessboard.get_turn()[1]).name == "WHITE":
-        screen.blit(square, (650, 10))
-    else:
-        screen.blit(square, (650, 575))
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -167,7 +164,8 @@ while carryOn:
                 if mode == "debug":
                     try:
                         checkAndExecuteMove(from_,to_)
-                    except:
+                    except Exception as e:
+                        print(e)
                         pass
                 if mode == "update":
                     chessboard.update(from_, to_)
