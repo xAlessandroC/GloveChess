@@ -32,9 +32,12 @@ def checkAndExecuteMove(fromCell, toCell):
     if instance.checkMove(fromCell, toCell):
         ##Aggiorno chessboard
         chessboard.update(fromCell,toCell)
-        if destPiece == "KING":
-            ## HAI VINTO
-        chessboard.increment_turn()
+        if destPiece[2:] == "KING":
+            print("Fine partita")
+            chessboard.setVictory(currentTurn)
+        else:
+            chessboard.increment_turn()
+
         return True
 
 

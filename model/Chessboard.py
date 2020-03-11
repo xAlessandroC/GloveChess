@@ -8,6 +8,8 @@ class Chessboard:
     __centers = np.ndarray((8, 8))
     __pieces = np.ndarray((8, 8), dtype = int)
     __num_turns = 0
+    __ended = False
+    __winner = None
 
     @staticmethod
     def getInstance():
@@ -26,6 +28,8 @@ class Chessboard:
             Chessboard.__instance = self
             self.__centers = centers
             self.__pieces = pieces
+            self.__ended = False
+            self.__winner = None
 
 
 #   def __str__(self):
@@ -61,3 +65,15 @@ class Chessboard:
 
     def getPieces(self):
         return np.copy(self.__pieces)
+
+    def isEnded(self):
+        return self.__ended
+
+    def setVictory(self, winner):
+        self.__ended = True
+        self.__winner = winner
+        self.__num_turns = 0
+        self.__pieces = getInitialConfiguration()
+
+    def getWinner(self):
+        return self.__winner
