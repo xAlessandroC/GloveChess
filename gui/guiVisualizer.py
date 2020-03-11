@@ -97,87 +97,90 @@ def detectCollidedSprite(mouse_pos):
 
     return None, -1, -1
 
+def startGui():
+    pygame.init()
+    size = (width, height)
+    screen = pygame.display.set_mode(size)
+    icon = pygame.image.load("../resources/gui/chess.png")
+    pygame.display.set_caption("AR Chess")
+    pygame.display.set_icon(icon)
 
-pygame.init()
-size = (width, height)
-screen = pygame.display.set_mode(size)
-icon = pygame.image.load("../resources/gui/chess.png")
-pygame.display.set_caption("AR Chess")
-pygame.display.set_icon(icon)
+    ## BACKGROUND
+    background = board
+    circle = pygame.image.load("../resources/gui/circle.png")
+    circle = pygame.transform.scale(circle,(10,10))
 
-## BACKGROUND
-background = board
-circle = pygame.image.load("../resources/gui/circle.png")
-circle = pygame.transform.scale(circle,(10,10))
-
-## DRAWINGS SETTINGS
-font_title = pygame.font.SysFont('Comic Sans MS', 44)
-font_mode = pygame.font.SysFont('Comic Sans MS', 20)
-
-
-carryOn = True
-clock = pygame.time.Clock()
-pressed = False
-pressed_sprite = None
-cell_x = -1
-cell_y = -1
+    ## DRAWINGS SETTINGS
+    font_title = pygame.font.SysFont('Comic Sans MS', 44)
+    font_mode = pygame.font.SysFont('Comic Sans MS', 20)
 
 
-while carryOn:
-    mouse_pos = pygame.mouse.get_pos()
-
-    draw_text('AR CHESS', font_title, (255, 0, 0), screen, 770, 10)
-    draw_text('Mode: '+mode, font_mode, (255, 255, 255), screen, 950, 600)
-
-    screen.blit(background,(0,0))
-    model = chessboard.getPieces()
-    # model = np.flip(model,1)
-
-    for i in range(8):
-        for j in range(8):
-            if model[i,j] != Piece.EMPTY:
-                if i != cell_x or j != cell_y:
-                    screen.blit(PIECES[model[i,j].name.lower()].image,centers[i,j])
-
-    if pressed and pressed_sprite != None:
-        screen.blit(pressed_sprite,(mouse_pos[0]-25,mouse_pos[1]-25))
+    carryOn = True
+    clock = pygame.time.Clock()
+    pressed = False
+    pressed_sprite = None
+    cell_x = -1
+    cell_y = -1
 
 
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            carryOn = False
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
+    while carryOn:
+        mouse_pos = pygame.mouse.get_pos()
+
+        draw_text('AR CHESS', font_title, (255, 0, 0), screen, 770, 10)
+        draw_text('Mode: '+mode, font_mode, (255, 255, 255), screen, 950, 600)
+
+        screen.blit(background,(0,0))
+        model = chessboard.getPieces()
+        # model = np.flip(model,1)
+
+        for i in range(8):
+            for j in range(8):
+                if model[i,j] != Piece.EMPTY:
+                    if i != cell_x or j != cell_y:
+                        screen.blit(PIECES[model[i,j].name.lower()].image,centers[i,j])
+
+        if pressed and pressed_sprite != None:
+            screen.blit(pressed_sprite,(mouse_pos[0]-25,mouse_pos[1]-25))
+
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
                 carryOn = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    carryOn = False
 
-        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-            pressed = True
-            pressed_sprite, cell_x, cell_y = detectCollidedSprite(mouse_pos)
-        if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
-            ##chessboard update
-            if pressed_sprite != None:
-                i,j = clickedCell(mouse_pos)
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                pressed = True
+                pressed_sprite, cell_x, cell_y = detectCollidedSprite(mouse_pos)
+            if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
+                ##chessboard update
+                if pressed_sprite != None:
+                    i,j = clickedCell(mouse_pos)
 
-                from_ = str(conversions[cell_x]) + str(cell_y + 1)
-                to_ = str(conversions[i]) + str(j + 1)
-                # print(from_, to_)
-                if mode == "debug":
-                    try:
-                        checkAndExecuteMove(from_,to_)
-                    except Exception as e:
-                        print(e)
-                        pass
-                if mode == "update":
-                    chessboard.update(from_, to_)
-
-
-                pressed = False
-                pressed_sprite = None
-                cell_x = -1
-                cell_y = -1
-
-    pygame.display.flip()
-    clock.tick(60)
+                    from_ = str(conversions[cell_x]) + str(cell_y + 1)
+                    to_ = str(conversions[i]) + str(j + 1)
+                    # print(from_, to_)
+                    if mode == "debug":
+                        try:
+                            checkAndExecuteMove(from_,to_)
+                        except Exception as e:
+                            print(e)
+                            pass
+                    if mode == "update":
+                        chessboard.update(from_, to_)
 
 
-pygame.quit()
+                    pressed = False
+                    pressed_sprite = None
+                    cell_x = -1
+                    cell_y = -1
+
+        pygame.display.flip()
+        clock.tick(60)
+
+
+    pygame.quit()
+
+if __name__ == "__main__":
+    startGui()
