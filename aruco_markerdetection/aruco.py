@@ -1,18 +1,9 @@
 import numpy as np
 import cv2
 from cv2 import aruco
-
-from utils.paths import *
-from utils.feature_detection import *
 from utils.rendering import *
 
-id = 50
 aruco_dict = aruco.Dictionary_get(aruco.DICT_6X6_250)
-img = aruco.drawMarker(aruco_dict, id, 200)
-cache = None
-model = cv2.imread("resources/marker/aruco/model_50.png",0)
-h,w = model.shape
-
 
 def detect(frame, camera_matrix, dist_coefs, obj):
     frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -31,7 +22,7 @@ def detect(frame, camera_matrix, dist_coefs, obj):
         rvecs, tvecs, _ = aruco.estimatePoseSingleMarkers(corners, 8.0, camera_matrix, dist_coefs)
         rvec = rvecs[0]
         tvec = tvecs[0]
-        rendered_img = aruco.drawAxis(rendered_img, camera_matrix, dist_coefs, rvec, tvec, 6.0)
+        rendered_img = aruco.drawAxis(rendered_img, camera_matrix, dist_coefs, rvec, tvec, 10.0)
 
         # c = corners[0][0]
         # center_x = c[:, 0].mean()

@@ -7,14 +7,14 @@ from utils.calibration import *
 from utils.feature_detection import *
 from utils.rendering import *
 from utils.video import *
-from utils.paths import *
+import utils.config as config
 from utils.objLoader_simple import *
 from utils.webcam import *
 
 from aruco_markerdetection.aruco import *
 
 camera_matrix, dist_coefs, rvecs, tvecs = calibrate()
-obj = OBJ(obj_path)
+obj = OBJ(config.obj_path)
 cap = Webcam(0)
 while True:
     frame = cap.getNextFrame()
