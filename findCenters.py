@@ -1,4 +1,4 @@
-from utils.objloader_simple import *
+from utils.objLoader_simple import *
 import utils.config as config
 import numpy as np
 
