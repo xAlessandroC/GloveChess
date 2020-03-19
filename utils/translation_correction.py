@@ -1,8 +1,8 @@
 import cv2
 import numpy as np
 import os
-from utils.objLoader_simple import *
-import utils.config as config
+from objLoader_simple import *
+import config as config
 
 
 chess_piece = OBJ(config.obj_path)

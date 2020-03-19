@@ -1,28 +1,25 @@
+import cv2
+import numpy as np
+import ctypes
+import time
+import random
+import pieces_data as pieces_data
+import config as config
+
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
-import cv2
-import numpy as np
-import time
-import random
-from utils.calibration import *
-from utils.objloader_complete import *
-import utils.config as config
-from utils.webcam import *
-from aruco_markerdetection.aruco import *
-from utils.utility import *
+from aruco import *
+from calibration import *
+from objloader_complete import *
+from webcam import *
+from utility import *
+from opengl_utils import *
 from findCenters import *
-from utils.opengl_utils import *
-import pieces_data as pieces_data
-
-import sys
-sys.path.append('./model/')
-
 from chessboard import *
 from executer import *
 from piece import *
 
-import ctypes
 
 ###############################
 # GLOBAL VARIABLES
@@ -36,8 +33,6 @@ windowHeight = 720
 f = 1000.0
 n = 1.0
 
-# camera_matrix, dist_coefs, rvecs, tvecs = calibrate()
-
 alpha = None
 beta = None
 cx = None
@@ -48,9 +43,10 @@ _chessboard = None
 centers = []
 current = []
 previous = []
-num = 0
+
 count = 0
 ###############################
+
 def keyboard(key, x, y):
     sys.exit()
 
@@ -149,7 +145,7 @@ def draw():
 
         # glTranslatef(0, 0, -0.5)
         glRotatef(-180, 1.0, 0.0, 0.0)
-        glCallList(pieces_data.PIECES_DICT["Scacchiera"].gl_list)
+        glCallList(pieces_data.id_chessboardList)
 
         for key in pieces_data.PIECES_POSITION.keys():
             # print("disegno",pieces_data.PIECES_POSITION)
@@ -165,6 +161,7 @@ def draw():
     glutSwapBuffers()
 
 ##############################
+
 def updateChessboard(current, previous):
     if (len(current) == 0 or len(previous) == 0):
         return
@@ -188,23 +185,25 @@ def updateChessboard(current, previous):
             elif result[i,j]!=0:
                 to_= (i,j)
 
-    # print("SPOSTAMENTO: ",from_, to_, index_capture)
     if from_!=[] and to_!=[]:
         print(pieces_data.PIECES_POSITION)
-        print("SPOSTAMENTO: ",from_, to_, capture)
         id = pieces_data.PIECES_POSITION[str(from_[0])+"-"+str(from_[1])]
+
         if capture == True:
-            # del pieces_data.PIECES_POSITION[str(index_capture[0])+"-"+str(index_capture[1])]
             glDeleteLists(id, 1)
 
         del pieces_data.PIECES_POSITION[str(from_[0])+"-"+str(from_[1])]
-        translateVertices(id, previous[from_[0],from_[1]].name, *tuple(centers[to_[0],to_[1]]))
+        obj = pieces_data.PIECES_DICT[pieces_data.PIECES_CONV[previous[from_[0],from_[1]].name]]
+        new_vertices = translateVertices(id, obj, *tuple(centers[to_[0],to_[1]]))
+        overwriteList(id, obj, new_vertices)
         pieces_data.PIECES_POSITION[str(to_[0])+"-"+str(to_[1])] = id
+
         print(pieces_data.PIECES_POSITION)
+
 ###############################
 # INIT
-def initParam():
-    global camera_matrix, alpha, beta, cx, cy, _chessboard
+def init_param():
+    global camera_matrix, alpha, beta, cx, cy, _chessboard, centers
 
     alpha = config.camera_matrix[0][0]
     beta = config.camera_matrix[1][1]
@@ -213,10 +212,34 @@ def initParam():
 
     _chessboard = Chessboard.getInstance()
 
-def init():
-    global chess_piece, texture_background, chess_piece2, cubes, centers
+    centers = findCenters()
+    centers = centers.reshape(8,8,2)
+    centers = np.flip(centers,1)
+    centers = np.flip(centers,0)
 
-    initParam()
+def init_piece():
+    pieces = _chessboard.getPieces()
+    print("DICT:",pieces_data.PIECES_DICT)
+
+    ## Carico pezzi scacchi
+    for i in range(8):
+        for j in range(8):
+            if pieces[i,j] != Piece.EMPTY:
+                id = glGenLists(1)
+                pieces_data.PIECES_POSITION[str(i)+"-"+str(j)] = id
+                obj = pieces_data.PIECES_DICT[pieces_data.PIECES_CONV[pieces[i,j].name]]
+                new_vertices = translateVertices(id, obj, *tuple(centers[i,j]))
+                overwriteList(id, obj, new_vertices)
+
+    ## Carico scacchiera
+    pieces_data.id_chessboardList = glGenLists(1)
+    obj = pieces_data.PIECES_DICT["Scacchiera"]
+    overwriteList(pieces_data.id_chessboardList, obj, obj.vertices)
+
+    current = pieces
+
+def init_gl():
+    global chess_piece, texture_background, chess_piece2
 
     #glClearColor(0.7, 0.7, 0.7, 0.7)
     glClearColor(0.0, 0.0, 0.0, 1.0)
@@ -225,31 +248,19 @@ def init():
     glEnable(GL_LIGHTING)
     glEnable(GL_LIGHT0)
 
-    centers = findCenters()
-    centers = centers.reshape(8,8,2)
-    centers = np.flip(centers,1)
-    centers = np.flip(centers,0)
-
     glEnable(GL_TEXTURE_2D)
     texture_background = glGenTextures(1)
-
-################## TTEMP
-def init_piece():
-    pieces = _chessboard.getPieces()
-    for i in range(8):
-        for j in range(8):
-            if pieces[i,j] != Piece.EMPTY:
-                id = glGenLists(1)
-                pieces_data.PIECES_POSITION[str(i)+"-"+str(j)] = id
-                res = translateVertices(id, pieces[i,j].name, *tuple(centers[i,j]))
-
-    current = pieces
 
 ###############################
 # APPLICATION
 def init_application():
-    glutInitWindowPosition(0, 0);
-    glutInitWindowSize(windowWidth, windowHeight);
+    init_param()
+    init_piece()
+    init_gl()
+
+def init_glContext():
+    # glutInitWindowPosition(0, 0);
+    # glutInitWindowSize(windowWidth, windowHeight);
     glutInit(sys.argv)
 
     glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_GLUTMAINLOOP_RETURNS);
@@ -259,8 +270,7 @@ def init_application():
     glutKeyboardFunc(keyboard)
     glutIdleFunc(draw)
 
-    # glutFullScreen()
-    init()
+    glutFullScreen()
 
 def start_application():
     glutMainLoop()

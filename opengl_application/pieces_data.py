@@ -1,6 +1,5 @@
 import os
-from utils.objloader_complete import *
-# from utils.objLoader_simple import *
+from objloader_complete import *
 
 ## PIECES
 PIECES_CONV = {
@@ -19,6 +18,7 @@ PIECES_CONV = {
 }
 PIECES_DICT = {}
 PIECES_POSITION = {}
+id_chessboardList = None
 
 def load_pieces():
 
@@ -35,7 +35,7 @@ def load_pieces():
         for file in os.listdir(piece_dir):
             if file.startswith(piece) and file.endswith(".obj"):
                 print("Loading "+piece+"...")
-                complete_path= (os.path.join(piece_dir, file)).replace("\\","/")
+                complete_path = (os.path.join(piece_dir, file)).replace("\\","/")
                 print(complete_path)
                 obj = OBJ(complete_path)
 
