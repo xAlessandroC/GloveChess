@@ -1,7 +1,6 @@
 import pygame
 from pygame.locals import *
 import numpy as np
-
 import sys
 sys.path.append('../model/')
 
@@ -13,6 +12,7 @@ from executer import *
 
 width = 1100
 height = 640
+model = None
 
 mode = "debug"
 
@@ -85,12 +85,15 @@ def clickedCell(mouse_pos):
     return i,j
 
 def detectCollidedSprite(mouse_pos):
-
+    global model
+    print(PIECES)
     i,j = clickedCell(mouse_pos)
 
     print(i,j)
     if i>=0 and i<=7 and j>=0 and j<=7:
+        print("NAME:",model[i,j].name.lower())
         try:
+
             return PIECES[model[i,j].name.lower()].image, i, j
         except:
             return None, -1, -1
@@ -98,6 +101,8 @@ def detectCollidedSprite(mouse_pos):
     return None, -1, -1
 
 def startGui():
+    global model
+    
     pygame.init()
     size = (width, height)
     screen = pygame.display.set_mode(size)
@@ -153,6 +158,7 @@ def startGui():
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 pressed = True
                 pressed_sprite, cell_x, cell_y = detectCollidedSprite(mouse_pos)
+                print("DETECTED: ", pressed_sprite, cell_x, cell_y)
             if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
                 ##chessboard update
                 if pressed_sprite != None:
