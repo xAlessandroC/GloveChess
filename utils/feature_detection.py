@@ -4,8 +4,8 @@ import math
 from matplotlib import pyplot as plt
 import time
 
-from utils.config import *
-from stabilization.stabilizer import *
+from config import *
+from stabilizer import *
 
 def detect(img_train, camera_parameters, matchVis=False):
     global kp_query, des_query
