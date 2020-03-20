@@ -3,28 +3,45 @@ sys.path.append('../model/')
 
 from chessboard import *
 from executer import *
+from threading import Thread
+from model_utils import Player as Turn
+import main
 
 _chessboard = Chessboard.getInstance()
-player = "WHITE"
 
-def startPlayer(type):
-    while _chessboard.isEnded() != True :
-        currentTurn = Player(_chessboard.get_turn()[1]).name
+class Players(Thread):
+    def __init__(self, name):
+        Thread.__init__(self)
+        self.name = name
 
-        #SCEGLIE MOSSA
-        if currentTurn == type:
-            from_ = input("Please enter from value:\n")
-            to_ = input("Please enter to value:\n")
+    def run(self):
+        while _chessboard.isEnded() != True :
+            currentTurn = Turn(_chessboard.get_turn()[1]).name
+            print("turno di ", currentTurn)
+            print("Giocatore",self.name,": nuovo ciclo")
 
-            try:
-                checkAndExecuteMove(from_, to_)
-            except:
-                pass
-        # else:
-        #     #MI SOSPENDO
+            #SCEGLIE MOSSA
+            main.condition.acquire()
+            currentTurn = Turn(_chessboard.get_turn()[1]).name
+            if _chessboard.isEnded() == True:
+                main.condition.release()
 
+            elif currentTurn == self.name:
+                # print("Giocatore",type,": lock acquisito")
 
-    print("Il vincitore è:", _chessboard.getWinner())
+                from_ = input("Giocatore "+self.name+" Please enter from value:\n")
+                to_ = input("Giocatore "+self.name+" Please enter to value:\n")
 
-if __name__ == "__main__":
-    startPlayer()
+                try:
+                    checkAndExecuteMove(from_, to_)
+                except:
+                    pass
+
+                main.condition.notifyAll()
+                main.condition.release()
+
+            else:
+                print("Giocatore",self.name,": mi sospendo")
+                main.condition.wait()
+
+        print("Il vincitore è:", _chessboard.getWinner())
