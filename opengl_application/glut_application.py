@@ -52,18 +52,18 @@ def keyboard(key, x, y):
 
 def draw():
     global previous, current, count
-    if count == 10:
-        print("mossa")
-        checkAndExecuteMove("a2", "a4")
-    if count == 25:
-        print("mossa")
-        checkAndExecuteMove("b7", "b5")
-    if count == 40:
-        print("mossa")
-        checkAndExecuteMove("a1", "a2")
-    if count == 65:
-        print("mossa")
-        checkAndExecuteMove("b5", "a4")
+    # if count == 10:
+    #     print("mossa")
+    #     checkAndExecuteMove("a2", "a4")
+    # if count == 25:
+    #     print("mossa")
+    #     checkAndExecuteMove("b7", "b5")
+    # if count == 40:
+    #     print("mossa")
+    #     checkAndExecuteMove("a1", "a2")
+    # if count == 65:
+    #     print("mossa")
+    #     checkAndExecuteMove("b5", "a4")
 
     img = webcam.getNextFrame()
     current = _chessboard.getPieces()

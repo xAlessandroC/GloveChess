@@ -1,11 +1,10 @@
 import sys
-sys.path.append('../model/')
 
 from chessboard import *
 from executer import *
 from threading import Thread
 from model_utils import *
-import main
+import ARChess_application as main
 
 _chessboard = Chessboard.getInstance()
 
