@@ -13,7 +13,7 @@ class PawnChecker(Checker):
 
         chessboard = Chessboard.getInstance()
 
-        currentTurn = Player(chessboard.get_turn()[1]).name
+        currentTurn = Turn(chessboard.get_turn()[1]).name
 
         fromCell_matrix = from_chessboard_to_matrix(fromCell)
         toCell_matrix = from_chessboard_to_matrix(toCell)

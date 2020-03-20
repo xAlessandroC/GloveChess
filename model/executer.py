@@ -5,7 +5,7 @@ from queenChecker import *
 def checkAndExecuteMove(fromCell, toCell):
     chessboard = Chessboard.getInstance()
 
-    currentTurn = Player(chessboard.get_turn()[1]).name
+    currentTurn = Turn(chessboard.get_turn()[1]).name
     selectedPiece = chessboard.from_index_to_piece(fromCell)
     destPiece = chessboard.from_index_to_piece(toCell)
 
