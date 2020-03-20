@@ -4,12 +4,12 @@ sys.path.append('../model/')
 from chessboard import *
 from executer import *
 from threading import Thread
-from model_utils import Player as Turn
+from model_utils import *
 import main
 
 _chessboard = Chessboard.getInstance()
 
-class Players(Thread):
+class Player(Thread):
     def __init__(self, name):
         Thread.__init__(self)
         self.name = name
