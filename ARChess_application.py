@@ -30,6 +30,7 @@ if __name__ == "__main__":
 
     init_application()
 
+    # TODO: Implementare corretta terminazione dei thread
     # PLAYERS
     playerW = Player("WHITE")
     playerB = Player("BLACK")

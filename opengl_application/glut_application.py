@@ -48,22 +48,14 @@ count = 0
 ###############################
 
 def keyboard(key, x, y):
+    for key in pieces_data.PIECES_POSITION.keys():
+        glDeleteLists(pieces_data.PIECES_POSITION[key], 1)
+
+    webcam.release()
     sys.exit()
 
 def draw():
     global previous, current, count
-    # if count == 10:
-    #     print("mossa")
-    #     checkAndExecuteMove("a2", "a4")
-    # if count == 25:
-    #     print("mossa")
-    #     checkAndExecuteMove("b7", "b5")
-    # if count == 40:
-    #     print("mossa")
-    #     checkAndExecuteMove("a1", "a2")
-    # if count == 65:
-    #     print("mossa")
-    #     checkAndExecuteMove("b5", "a4")
 
     img = webcam.getNextFrame()
     current = _chessboard.getPieces()
@@ -148,7 +140,6 @@ def draw():
         glCallList(pieces_data.id_chessboardList)
 
         for key in pieces_data.PIECES_POSITION.keys():
-            # print("disegno",pieces_data.PIECES_POSITION)
             glCallList(pieces_data.PIECES_POSITION[key])
 
         glPopMatrix()
