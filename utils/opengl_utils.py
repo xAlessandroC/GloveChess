@@ -3,7 +3,7 @@ import pieces_data as pieces_data
 import numpy as np
 import copy
 
-def translate(vertices, x, y):
+def translate(vertices, x = 0, y = 0, z = 0):
 
     np_vertices = np.asarray(vertices).astype(np.float32)
     mean = np.mean(np_vertices,axis=0)
@@ -14,21 +14,23 @@ def translate(vertices, x, y):
     for vertex in np_vertices:
         old_first = vertex[0]
         old_second = vertex[1]
+        old_third = vertex[2]
 
         ##TRANSLATION
         new_first = old_first + x - mean[0]
         new_second = old_second + y - mean[1]
+        new_third = old_third + z
 
-        res.append([new_first,new_second,vertex[2]])
+        res.append([new_first,new_second,new_third])
 
     res = np.array(res).astype(np.float32)
     return res
 
 
-def translateVertices(id_list, obj, x=0, y=0):
-    print("TRANSLATION: ",x,y)
+def translateVertices(id_list, obj, x=0, y=0, z=0):
+    print("TRANSLATION: ",x,y,z)
 
-    new_vertices = translate(obj.vertices, x, y)
+    new_vertices = translate(obj.vertices, x, y, z)
 
     return new_vertices
 

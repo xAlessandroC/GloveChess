@@ -185,7 +185,7 @@ def updateChessboard(current, previous):
 
         del pieces_data.PIECES_POSITION[str(from_[0])+"-"+str(from_[1])]
         obj = pieces_data.PIECES_DICT[pieces_data.PIECES_CONV[previous[from_[0],from_[1]].name]]
-        new_vertices = translateVertices(id, obj, *tuple(centers[to_[0],to_[1]]))
+        new_vertices = translateVertices(id, obj, *tuple(centers[to_[0],to_[1]]), z=2)
         overwriteList(id, obj, new_vertices)
         pieces_data.PIECES_POSITION[str(to_[0])+"-"+str(to_[1])] = id
 
@@ -219,7 +219,7 @@ def init_piece():
                 id = glGenLists(1)
                 pieces_data.PIECES_POSITION[str(i)+"-"+str(j)] = id
                 obj = pieces_data.PIECES_DICT[pieces_data.PIECES_CONV[pieces[i,j].name]]
-                new_vertices = translateVertices(id, obj, *tuple(centers[i,j]))
+                new_vertices = translateVertices(id, obj, *tuple(centers[i,j]), z=2)
                 overwriteList(id, obj, new_vertices)
 
     ## Carico scacchiera
