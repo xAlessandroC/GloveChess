@@ -25,7 +25,7 @@ from piece import *
 # GLOBAL VARIABLES
 texture_background = None
 chess_piece = None
-webcam = Webcam(0)
+webcam = None
 
 windowWidth = 1280
 windowHeight = 720
@@ -52,7 +52,7 @@ def keyboard(key, x, y):
         glDeleteLists(pieces_data.PIECES_POSITION[key], 1)
 
     webcam.release()
-    sys.exit()
+    glutLeaveMainLoop()
 
 def draw():
     global previous, current, count
@@ -194,12 +194,14 @@ def updateChessboard(current, previous):
 ###############################
 # INIT
 def init_param():
-    global camera_matrix, alpha, beta, cx, cy, _chessboard, centers
+    global camera_matrix, alpha, beta, cx, cy, _chessboard, centers, webcam
 
     alpha = config.camera_matrix[0][0]
     beta = config.camera_matrix[1][1]
     cx = config.camera_matrix[0][2]
     cy = config.camera_matrix[1][2]
+
+    webcam = Webcam(0)
 
     _chessboard = Chessboard.getInstance()
 

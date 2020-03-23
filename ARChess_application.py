@@ -15,6 +15,7 @@ from player import *
 _chessboard = Chessboard.getInstance()
 lock = threading.Lock()
 condition = threading.Condition(lock)
+termination = False
 
 if __name__ == "__main__":
     print("Starting application...")
@@ -30,7 +31,6 @@ if __name__ == "__main__":
 
     init_application()
 
-    # TODO: Implementare corretta terminazione dei thread
     # PLAYERS
     playerW = Player("WHITE")
     playerB = Player("BLACK")
@@ -40,3 +40,9 @@ if __name__ == "__main__":
 
     # OPENGL_APP
     start_application()
+
+    # Chiusura Threads
+    termination = True
+
+    playerW.terminate()
+    playerB.terminate()
