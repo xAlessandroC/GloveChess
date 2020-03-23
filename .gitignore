@@ -12,3 +12,4 @@ resources/chess_models_reduced/
 resources/data/
 resources/ARChess_logo.png
 temp/
+rename.py
