@@ -25,7 +25,7 @@ from piece import *
 # GLOBAL VARIABLES
 texture_background = None
 chess_piece = None
-webcam = Webcam(0)
+webcam = None
 
 windowWidth = 1280
 windowHeight = 720
@@ -48,22 +48,14 @@ count = 0
 ###############################
 
 def keyboard(key, x, y):
-    sys.exit()
+    for key in pieces_data.PIECES_POSITION.keys():
+        glDeleteLists(pieces_data.PIECES_POSITION[key], 1)
+
+    webcam.release()
+    glutLeaveMainLoop()
 
 def draw():
     global previous, current, count
-    if count == 10:
-        print("mossa")
-        checkAndExecuteMove("a2", "a4")
-    if count == 25:
-        print("mossa")
-        checkAndExecuteMove("b7", "b5")
-    if count == 40:
-        print("mossa")
-        checkAndExecuteMove("a1", "a2")
-    if count == 65:
-        print("mossa")
-        checkAndExecuteMove("b5", "a4")
 
     img = webcam.getNextFrame()
     current = _chessboard.getPieces()
@@ -148,7 +140,6 @@ def draw():
         glCallList(pieces_data.id_chessboardList)
 
         for key in pieces_data.PIECES_POSITION.keys():
-            # print("disegno",pieces_data.PIECES_POSITION)
             glCallList(pieces_data.PIECES_POSITION[key])
 
         glPopMatrix()
@@ -194,7 +185,7 @@ def updateChessboard(current, previous):
 
         del pieces_data.PIECES_POSITION[str(from_[0])+"-"+str(from_[1])]
         obj = pieces_data.PIECES_DICT[pieces_data.PIECES_CONV[previous[from_[0],from_[1]].name]]
-        new_vertices = translateVertices(id, obj, *tuple(centers[to_[0],to_[1]]))
+        new_vertices = translateVertices(id, obj, *tuple(centers[to_[0],to_[1]]), z=2)
         overwriteList(id, obj, new_vertices)
         pieces_data.PIECES_POSITION[str(to_[0])+"-"+str(to_[1])] = id
 
@@ -203,12 +194,14 @@ def updateChessboard(current, previous):
 ###############################
 # INIT
 def init_param():
-    global camera_matrix, alpha, beta, cx, cy, _chessboard, centers
+    global camera_matrix, alpha, beta, cx, cy, _chessboard, centers, webcam
 
     alpha = config.camera_matrix[0][0]
     beta = config.camera_matrix[1][1]
     cx = config.camera_matrix[0][2]
     cy = config.camera_matrix[1][2]
+
+    webcam = Webcam(0)
 
     _chessboard = Chessboard.getInstance()
 
@@ -228,7 +221,7 @@ def init_piece():
                 id = glGenLists(1)
                 pieces_data.PIECES_POSITION[str(i)+"-"+str(j)] = id
                 obj = pieces_data.PIECES_DICT[pieces_data.PIECES_CONV[pieces[i,j].name]]
-                new_vertices = translateVertices(id, obj, *tuple(centers[i,j]))
+                new_vertices = translateVertices(id, obj, *tuple(centers[i,j]), z=2)
                 overwriteList(id, obj, new_vertices)
 
     ## Carico scacchiera

@@ -2,7 +2,7 @@ from enum import Enum
 from piece import Piece
 import numpy as np
 
-class Player(Enum):
+class Turn(Enum):
     WHITE = 0; BLACK = 1
 
 conversions = {0 : "a",

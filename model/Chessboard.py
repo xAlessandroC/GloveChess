@@ -41,9 +41,9 @@ class Chessboard:
 
     def get_turn(self):
         if self.__num_turns % 2 == 0:
-            return self.__num_turns, Player.WHITE.value
+            return self.__num_turns, Turn.WHITE.value
         else:
-            return self.__num_turns, Player.BLACK.value
+            return self.__num_turns, Turn.BLACK.value
 
     def from_index_to_piece(self, index):
         if isinstance(index, str):
