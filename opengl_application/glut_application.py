@@ -71,9 +71,10 @@ def mouse(button, state, x, y):
         world_coord = (world_coord[0], -world_coord[1], -world_coord[2])
 
         center_idx = nearestCenter(centers, *world_coord)
-        new_vertices = translateVertices(pieces_data.id_selectionSprite, obj_s, *tuple(centers[center_idx[0], center_idx[1]]), z=13)
-        overwriteList(pieces_data.id_selectionSprite, obj_s, new_vertices)
         print("CENTER_IDX:", center_idx)
+        if center_idx[0]>0 and center_idx[1]>0:
+            new_vertices = translateVertices(pieces_data.id_selectionSprite, obj_s, *tuple(centers[center_idx[0], center_idx[1]]), z=13)
+            overwriteList(pieces_data.id_selectionSprite, obj_s, new_vertices)
 
         print("MVM:",current_mvm)
         print("[VIEWPORT]: Button click at ",x,y)

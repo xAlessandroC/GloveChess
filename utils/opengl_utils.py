@@ -60,3 +60,19 @@ def overwriteList(id_list, obj, new_vertices):
         glEnd()
     glDisable(GL_TEXTURE_2D)
     glEndList()
+
+def nearestCenter(centers, x, y, z):
+    print("point:",(x,y))
+    for i in range(centers.shape[0]):
+        for j in range(centers.shape[1]):
+            center = centers[i,j]
+            point = np.array([x,y])
+
+            distance = np.linalg.norm(center-point)
+            print("distance from ",center,"=",distance)
+
+            if distance < 2.5:
+                return (i,j)
+
+
+    return (-1,-1)
