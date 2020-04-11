@@ -53,6 +53,7 @@ selector_y = 0
 current_mvm = None
 ###############################
 def mouse(button, state, x, y):
+    global obj_s
     x_ndc = (2.0 * x + 1.0) / 1280 - 1.0
     y_ndc = (2.0 * y + 1.0) / 720 - 1.0
 
@@ -67,6 +68,12 @@ def mouse(button, state, x, y):
     if state == GLUT_DOWN:
         z_value = glReadPixels( x, 720-y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT)
         world_coord = gluUnProject(x, 720-y, z_value, current_mvm, projMatrix_r, viewport_r)
+        world_coord = (world_coord[0], -world_coord[1], -world_coord[2])
+
+        center_idx = nearestCenter(centers, *world_coord)
+        new_vertices = translateVertices(pieces_data.id_selectionSprite, obj_s, *tuple(centers[center_idx[0], center_idx[1]]), z=13)
+        overwriteList(pieces_data.id_selectionSprite, obj_s, new_vertices)
+        print("CENTER_IDX:", center_idx)
 
         print("MVM:",current_mvm)
         print("[VIEWPORT]: Button click at ",x,y)
@@ -196,8 +203,8 @@ def draw():
         glCallList(pieces_data.id_selectionSprite)
         glCallList(pieces_data.id_chessboardList)
 
-        # for key in pieces_data.PIECES_POSITION.keys():
-        #     glCallList(pieces_data.PIECES_POSITION[key])
+        for key in pieces_data.PIECES_POSITION.keys():
+            glCallList(pieces_data.PIECES_POSITION[key])
 
         glPopMatrix()
 
