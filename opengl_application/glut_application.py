@@ -49,7 +49,31 @@ count = 0
 obj_s = None
 selector_x = 0
 selector_y = 0
+
+current_mvm = None
 ###############################
+def mouse(button, state, x, y):
+    x_ndc = (2.0 * x + 1.0) / 1280 - 1.0
+    y_ndc = (2.0 * y + 1.0) / 720 - 1.0
+
+    modelMatrix_r = glGetDoublev(GL_MODELVIEW_MATRIX)
+    projMatrix_r = glGetDoublev(GL_PROJECTION_MATRIX)
+    viewport_r = glGetIntegerv(GL_VIEWPORT)
+
+    # print(modelMatrix_r)
+    # print(projMatrix_r)
+    # print(viewport_r)
+
+    if state == GLUT_DOWN:
+        z_value = glReadPixels( x, 720-y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT)
+        world_coord = gluUnProject(x, 720-y, z_value, current_mvm, projMatrix_r, viewport_r)
+
+        print("MVM:",current_mvm)
+        print("[VIEWPORT]: Button click at ",x,y)
+        print("Z-VALUE:", z_value)
+        print("3D COORD:", world_coord)
+        # print("[NDC]: Button click at ",x_ndc,y_ndc)
+
 
 def keyboard(key, x, y):
     global selector_x, selector_y, obj_s
@@ -86,7 +110,7 @@ def keyboard(key, x, y):
     # print("Selector in :", selector_x,selector_y)
 
 def draw():
-    global previous, current, count
+    global previous, current, count, current_mvm
 
     img = webcam.getNextFrame()
     current = _chessboard.getPieces()
@@ -165,14 +189,15 @@ def draw():
         m = compositeArray(cv2.Rodrigues(rvec)[0], tvec[0][0])
         glPushMatrix()
         glLoadMatrixd(m.T)
+        current_mvm = glGetDoublev(GL_MODELVIEW_MATRIX)
 
         # glTranslatef(0, 0, -0.5)
         glRotatef(-180, 1.0, 0.0, 0.0)
         glCallList(pieces_data.id_selectionSprite)
         glCallList(pieces_data.id_chessboardList)
 
-        for key in pieces_data.PIECES_POSITION.keys():
-            glCallList(pieces_data.PIECES_POSITION[key])
+        # for key in pieces_data.PIECES_POSITION.keys():
+        #     glCallList(pieces_data.PIECES_POSITION[key])
 
         glPopMatrix()
 
@@ -255,6 +280,7 @@ def init_piece():
                 id = glGenLists(1)
                 pieces_data.PIECES_POSITION[str(i)+"-"+str(j)] = id
                 obj = pieces_data.PIECES_DICT[pieces_data.PIECES_CONV[pieces[i,j].name]]
+                print("INDEX:",i,j)
                 new_vertices = translateVertices(id, obj, *tuple(centers[i,j]), z=2)
                 overwriteList(id, obj, new_vertices)
 
@@ -301,6 +327,7 @@ def init_glContext():
     glutCreateWindow("AR CHESS")
     glutDisplayFunc(draw)
     glutKeyboardFunc(keyboard)
+    glutMouseFunc(mouse)
     glutIdleFunc(draw)
 
     glutFullScreen()
