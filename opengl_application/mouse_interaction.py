@@ -39,12 +39,15 @@ def mouse(button, state, x, y):
         center_idx = nearestCenter(glt_app.centers, *world_coord)
         print("CENTER_IDX:", center_idx)
         if center_idx[0]>=0 and center_idx[1]>=0:
-            new_vertices = translateVertices(pieces_data.id_selectionSprite, obj_s, *tuple(glt_app.centers[center_idx[0], center_idx[1]]), z=13)
-            overwriteList(pieces_data.id_selectionSprite, obj_s, new_vertices)
             print("CHESSBOARD POSITION:", from_matrix_to_chessboard(center_idx))
             if from_ != "":
                 to_ = from_matrix_to_chessboard(center_idx)
-                checkAndExecuteMove(from_, to_)
+                try:
+                    checkAndExecuteMove(from_, to_)
+                    new_vertices = translateVertices(pieces_data.id_selectionSprite, obj_s, *tuple(glt_app.centers[center_idx[0], center_idx[1]]), z=13)
+                    overwriteList(pieces_data.id_selectionSprite, obj_s, new_vertices)
+                except:
+                    pass
                 from_ = ""
                 to_ = ""
 
