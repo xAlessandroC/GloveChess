@@ -13,6 +13,10 @@ from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 from matplotlib import colors
 
+detected = 0
+offset_H = 10
+offset_S = 70
+
 def segmentation(frame, frame_threshold):
     result = cv2.bitwise_and(frame, frame, mask=frame_threshold)
 
@@ -69,7 +73,7 @@ def fingerFilter(contoured_frame, fingers, contour, hull):
     # Filtro i punti trovati in base alla loro distanza dal centro della mano per omettere valori spuri
     final_fingers = []
     for i in range(len(fingers)):
-        print("DISTANCE",np.linalg.norm(np.array(fingers[i])-np.array([bounding_r[0]+bounding_r[2]/2, bounding_r[1]+bounding_r[3]/2])))
+        # print("DISTANCE",np.linalg.norm(np.array(fingers[i])-np.array([bounding_r[0]+bounding_r[2]/2, bounding_r[1]+bounding_r[3]/2])))
         if np.linalg.norm(np.array(fingers[i])-np.array(center))<230:
             final_fingers.append(fingers[i])
 
@@ -86,12 +90,43 @@ def findFingers(frame, contour, hull):
 
     return filtered_fingers
 
+def start_segmentation(img):
+    sub_image = img[start_point[1]:end_point[1], start_point[0]:end_point[0], :]
+    mean = np.mean(sub_image, axis = (0,1))
+
+    print(offset_S, offset_H)
+    low_th = [mean[0]-offset_H, mean[1]-offset_S, 20]
+    high_th = [mean[0]+offset_H, mean[1]+offset_S, 255]
+
+    if low_th[0] < 0:
+        low_th[0] = 0
+    if high_th[0] < 0:
+        high_th[0] = 0
+    if low_th[0] >180:
+        low_th[0] = 180
+    if high_th[0] > 180:
+        high_th[0] = 180
+
+    if low_th[1] < 0:
+        low_th[1] = 0
+    if high_th[1] < 0:
+        high_th[1] = 0
+    if low_th[1] >255:
+        low_th[1] = 255
+    if high_th[1] > 255:
+        high_th[1 ] = 255
+
+    print("THRESHOLDS FOUND:", low_th, high_th)
+
+    return tuple(low_th), tuple(high_th)
 
 if __name__ == "__main__":
     webcam = Webcam(0)
-    low_H = 0;  high_H = 11;
-    low_S = 117;  high_S = 255;
-    low_V = 20;  high_V = 255;
+    # low_H = 0;  high_H = 11;
+    # low_S = 117;  high_S = 255;
+    # low_V = 20;  high_V = 255;
+    start_point = (700, 300)
+    end_point = (850, 450)
 
     # cv2.namedWindow("GLOVE", cv2.WND_PROP_FULLSCREEN)
     # cv2.setWindowProperty("GLOVE", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
@@ -104,30 +139,43 @@ if __name__ == "__main__":
             break
 
         frame_HSV = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-        frame_threshold = cv2.inRange(frame_HSV, (low_H, low_S, low_V), (high_H, high_S, high_V))
 
-        frame_result = segmentation(frame, frame_threshold)
+        if detected == 0:
+            cv2.rectangle(frame, start_point, end_point, (0,255,0), 2)
 
-        ## Find fingers
-        _, contours, hierarchy = cv2.findContours(frame_threshold, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-        maxArea = -1
-        idx = -1
-        for i in range(len(contours)):  # find the biggest contour (according to area)
-            area = cv2.contourArea(contours[i])
-            if area > maxArea:
-                maxArea = area
-                idx = i
+        else:
+            frame_threshold = cv2.inRange(frame_HSV, (low_H, low_S, low_V), (high_H, high_S, high_V))
 
-        selected_cnt = contours[idx]
-        contoured_frame = np.copy(frame)
-        hull = cv2.convexHull(selected_cnt)
+            frame_result = segmentation(frame, frame_threshold)
 
-        fingers_t = findFingers(contoured_frame, selected_cnt, hull)
+            ## Find fingers
+            _, contours, hierarchy = cv2.findContours(frame_threshold, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+            maxArea = -1
+            idx = -1
+            for i in range(len(contours)):  # find the biggest contour (according to area)
+                area = cv2.contourArea(contours[i])
+                if area > maxArea:
+                    maxArea = area
+                    idx = i
 
-        for i in range(len(fingers_t)):
-            cv2.circle(contoured_frame, fingers_t[i], 8, [255, 0, 0], -1);
+            selected_cnt = contours[idx]
+            contoured_frame = np.copy(frame)
+            hull = cv2.convexHull(selected_cnt)
 
-        cv2.imshow("GLOVE",frame_result)
-        cv2.imshow("CONTOUR",contoured_frame)
-        if cv2.waitKey(1) == ord('q'):
+            fingers_t = findFingers(contoured_frame, selected_cnt, hull)
+
+            for i in range(len(fingers_t)):
+                cv2.circle(contoured_frame, fingers_t[i], 8, [255, 0, 0], -1);
+
+            cv2.imshow("CONTOUR",contoured_frame)
+
+        cv2.imshow("GLOVE",frame)
+        k = cv2.waitKey(10)
+        if k == ord('q'):
             break;
+        if k == ord('d'):
+            detected = 1
+            lt, ht = start_segmentation(frame_HSV)
+            low_H = lt[0];  high_H = ht[0];
+            low_S = lt[1];  high_S = ht[1];
+            low_V = lt[2];  high_V = ht[2];
