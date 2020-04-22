@@ -19,6 +19,7 @@ PIECES_CONV = {
 PIECES_DICT = {}
 PIECES_POSITION = {}
 id_chessboardList = None
+id_selectionSprite = None
 
 def load_pieces():
 

@@ -16,6 +16,7 @@ from webcam import *
 from utility import *
 from opengl_utils import *
 from findCenters import *
+from mouse_interaction import *
 from chessboard import *
 from executer import *
 from piece import *
@@ -45,17 +46,50 @@ current = []
 previous = []
 
 count = 0
+
+obj_s = None
+selector_x = 0
+selector_y = 0
+
+current_mvm = None
 ###############################
 
 def keyboard(key, x, y):
-    for key in pieces_data.PIECES_POSITION.keys():
-        glDeleteLists(pieces_data.PIECES_POSITION[key], 1)
+    global selector_x, selector_y, obj_s
 
-    webcam.release()
-    glutLeaveMainLoop()
+    bkey = key.decode("utf-8")
+    # print("KEY:", bkey)
+    if bkey == "q":
+        for key in pieces_data.PIECES_POSITION.keys():
+            glDeleteLists(pieces_data.PIECES_POSITION[key], 1)
+
+        webcam.release()
+        glutLeaveMainLoop()
+    elif bkey == "w":
+        if selector_y < 7:
+            selector_y = selector_y + 1
+        new_vertices = translateVertices(pieces_data.id_selectionSprite, obj_s, *tuple(centers[selector_x,selector_y]), z=13)
+        overwriteList(pieces_data.id_selectionSprite, obj_s, new_vertices)
+    elif bkey == "a":
+        if selector_x > 0:
+            selector_x = selector_x - 1
+        new_vertices = translateVertices(pieces_data.id_selectionSprite, obj_s, *tuple(centers[selector_x,selector_y]), z=13)
+        overwriteList(pieces_data.id_selectionSprite, obj_s, new_vertices)
+    elif bkey == "s":
+        if selector_y > 0:
+            selector_y = selector_y - 1
+        new_vertices = translateVertices(pieces_data.id_selectionSprite, obj_s, *tuple(centers[selector_x,selector_y]), z=13)
+        overwriteList(pieces_data.id_selectionSprite, obj_s, new_vertices)
+    elif bkey == "d":
+        if selector_x < 7:
+            selector_x = selector_x + 1
+        new_vertices = translateVertices(pieces_data.id_selectionSprite, obj_s, *tuple(centers[selector_x,selector_y]), z=13)
+        overwriteList(pieces_data.id_selectionSprite, obj_s, new_vertices)
+
+    # print("Selector in :", selector_x,selector_y)
 
 def draw():
-    global previous, current, count
+    global previous, current, count, current_mvm
 
     img = webcam.getNextFrame()
     current = _chessboard.getPieces()
@@ -134,9 +168,11 @@ def draw():
         m = compositeArray(cv2.Rodrigues(rvec)[0], tvec[0][0])
         glPushMatrix()
         glLoadMatrixd(m.T)
+        current_mvm = glGetDoublev(GL_MODELVIEW_MATRIX)
 
         # glTranslatef(0, 0, -0.5)
         glRotatef(-180, 1.0, 0.0, 0.0)
+        glCallList(pieces_data.id_selectionSprite)
         glCallList(pieces_data.id_chessboardList)
 
         for key in pieces_data.PIECES_POSITION.keys():
@@ -211,6 +247,8 @@ def init_param():
     centers = np.flip(centers,0)
 
 def init_piece():
+    global obj_s
+
     pieces = _chessboard.getPieces()
     print("DICT:",pieces_data.PIECES_DICT)
 
@@ -221,6 +259,7 @@ def init_piece():
                 id = glGenLists(1)
                 pieces_data.PIECES_POSITION[str(i)+"-"+str(j)] = id
                 obj = pieces_data.PIECES_DICT[pieces_data.PIECES_CONV[pieces[i,j].name]]
+                print("INDEX:",i,j)
                 new_vertices = translateVertices(id, obj, *tuple(centers[i,j]), z=2)
                 overwriteList(id, obj, new_vertices)
 
@@ -228,6 +267,12 @@ def init_piece():
     pieces_data.id_chessboardList = glGenLists(1)
     obj = pieces_data.PIECES_DICT["Scacchiera"]
     overwriteList(pieces_data.id_chessboardList, obj, obj.vertices)
+
+    ## Carico faccia del cubo per la selezione
+    pieces_data.id_selectionSprite = glGenLists(1)
+    obj_s = OBJ("resources/chess_models_reduced/Selection/selector.obj")
+    new_vertices = translateVertices(pieces_data.id_selectionSprite, obj_s, *tuple(centers[0,0]), z=13)
+    overwriteList(pieces_data.id_selectionSprite, obj_s, new_vertices)
 
     current = pieces
 
@@ -261,6 +306,7 @@ def init_glContext():
     glutCreateWindow("AR CHESS")
     glutDisplayFunc(draw)
     glutKeyboardFunc(keyboard)
+    glutMouseFunc(mouse)
     glutIdleFunc(draw)
 
     glutFullScreen()
