@@ -52,6 +52,8 @@ selector_x = 0
 selector_y = 0
 
 current_mvm = None
+
+m_old = np.zeros((4,4))
 ###############################
 
 def keyboard(key, x, y):
@@ -88,8 +90,29 @@ def keyboard(key, x, y):
 
     # print("Selector in :", selector_x,selector_y)
 
+
+def matrixStabilizer(matrix, old_matrix):
+    similar_cnt = 0
+    dissimilar_cnt = 0
+    threshold = 0.03 #da testare
+
+    result = np.absolute(np.subtract(matrix, old_matrix))
+    # print("MATRICE RISULTANTE: ", result)
+
+    for i in range(4):
+        for j in range(4):
+            if result[i][j] < threshold:
+                similar_cnt += 1
+            else:
+                dissimilar_cnt +=1
+
+    if similar_cnt > dissimilar_cnt:
+        return old_matrix
+    else:
+        return matrix
+
 def draw():
-    global previous, current, count, current_mvm
+    global previous, current, count, current_mvm, m_old
 
     img = webcam.getNextFrame()
     current = _chessboard.getPieces()
@@ -166,6 +189,9 @@ def draw():
         rvec[0][0][1] = -rvec[0][0][1]
         rvec[0][0][2] = -rvec[0][0][2]
         m = compositeArray(cv2.Rodrigues(rvec)[0], tvec[0][0])
+        # stabilizza
+        m = matrixStabilizer(m, m_old)
+
         glPushMatrix()
         glLoadMatrixd(m.T)
         current_mvm = glGetDoublev(GL_MODELVIEW_MATRIX)
@@ -179,6 +205,7 @@ def draw():
             glCallList(pieces_data.PIECES_POSITION[key])
 
         glPopMatrix()
+        m_old = m.copy()
 
     glPopMatrix()
 
