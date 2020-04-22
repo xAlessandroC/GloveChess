@@ -1,5 +1,7 @@
 import os
 from objloader_complete import *
+from chessboard import *
+from opengl_utils import *
 
 ## PIECES
 PIECES_CONV = {
@@ -42,7 +44,37 @@ def load_pieces():
 
                 PIECES_DICT[piece] = obj
 
+    PIECES_DICT["Puntatore"] = OBJ("resources/chess_models_reduced/Selection/selector.obj")
     print(PIECES_DICT)
+
+def init_piece(centers):
+    global obj_s, id_selectionSprite, id_chessboardList
+
+    _chessboard = Chessboard.getInstance()
+    pieces = _chessboard.getPieces()
+    print("DICT:",PIECES_DICT)
+
+    ## Carico pezzi scacchi
+    for i in range(8):
+        for j in range(8):
+            if pieces[i,j] != Piece.EMPTY:
+                id = glGenLists(1)
+                PIECES_POSITION[str(i)+"-"+str(j)] = id
+                obj = PIECES_DICT[PIECES_CONV[pieces[i,j].name]]
+                print("INDEX:",i,j)
+                new_vertices = translateVertices(id, obj, *tuple(centers[i,j]), z=2)
+                overwriteList(id, obj, new_vertices)
+
+    ## Carico scacchiera
+    id_chessboardList = glGenLists(1)
+    obj = PIECES_DICT["Scacchiera"]
+    overwriteList(id_chessboardList, obj, obj.vertices)
+
+    ## Carico puntatore per la selezione
+    id_selectionSprite = glGenLists(1)
+    obj_s = PIECES_DICT["Puntatore"]
+    new_vertices = translateVertices(id_selectionSprite, obj_s, *tuple(centers[0,0]), z=13)
+    overwriteList(id_selectionSprite, obj_s, new_vertices)
 
 if __name__ == "__main__":
     load_pieces()

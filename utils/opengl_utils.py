@@ -1,5 +1,6 @@
 from OpenGL.GL import *
 import pieces_data as pieces_data
+from piece import *
 import numpy as np
 import copy
 
@@ -76,3 +77,66 @@ def nearestCenter(centers, x, y, z):
 
 
     return (-1,-1)
+
+def compositeArray(rvec, tvec):
+    v = np.c_[rvec, tvec.T]
+    v_ = np.r_[v, np.array([[0,0,0,1]])]
+    return v_
+
+def matrixStabilizer(matrix, old_matrix):
+    similar_cnt = 0
+    dissimilar_cnt = 0
+    threshold = 0.03 #da testare
+
+    result = np.absolute(np.subtract(matrix, old_matrix))
+    # print("MATRICE RISULTANTE: ", result)
+
+    for i in range(4):
+        for j in range(4):
+            if result[i][j] < threshold:
+                similar_cnt += 1
+            else:
+                dissimilar_cnt +=1
+
+    if similar_cnt > dissimilar_cnt:
+        return old_matrix
+    else:
+        return matrix
+
+def updateChessboard(current, previous):
+    if (len(current) == 0 or len(previous) == 0):
+        return
+
+    result = np.zeros((8,8))
+    for i in range(8):
+        for j in range(8):
+            result[i,j] = previous[i,j].value - current[i,j].value
+
+    ## Aggiorno dizionario
+    from_ = []
+    to_ = []
+    capture = []
+    for i in range(8):
+        for j in range(8):
+            if result[i,j]!=0 and previous[i,j]!=Piece.EMPTY and current[i,j]!=Piece.EMPTY:
+                capture = True
+                to_= (i,j)
+            elif result[i,j]<0 and (previous[i,j]!=Piece.EMPTY or current[i,j]!=Piece.EMPTY):
+                from_= (i,j)
+            elif result[i,j]!=0:
+                to_= (i,j)
+
+    if from_!=[] and to_!=[]:
+        print(pieces_data.PIECES_POSITION)
+        id = pieces_data.PIECES_POSITION[str(from_[0])+"-"+str(from_[1])]
+
+        if capture == True:
+            glDeleteLists(id, 1)
+
+        del pieces_data.PIECES_POSITION[str(from_[0])+"-"+str(from_[1])]
+        obj = pieces_data.PIECES_DICT[pieces_data.PIECES_CONV[previous[from_[0],from_[1]].name]]
+        new_vertices = translateVertices(id, obj, *tuple(centers[to_[0],to_[1]]), z=2)
+        overwriteList(id, obj, new_vertices)
+        pieces_data.PIECES_POSITION[str(to_[0])+"-"+str(to_[1])] = id
+
+        print(pieces_data.PIECES_POSITION)
