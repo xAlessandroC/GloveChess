@@ -17,6 +17,24 @@ detected = 0
 offset_H = 10
 offset_S = 70
 
+def getReduction(ar):
+    armax = 0.70
+    armin = 0.30
+    vmax = 100
+    vmin = 0
+
+    x = ar
+    if ar>armax:    x=armax
+    if ar<armin:    x=armin
+
+    r1 = (vmin-vmax)/(armax-armin)
+    r2 = (armin*(vmin-vmax))/(armax-armin)
+
+    reduction = x*r1 - r2 + vmax
+    reduction = int(reduction)
+    print("AR:",ar,"Reduction for",x,"=",reduction)
+    return reduction
+
 def segmentation(frame, frame_threshold):
     result = cv2.bitwise_and(frame, frame, mask=frame_threshold)
 
@@ -65,24 +83,24 @@ def fingerFilter(contoured_frame, fingers, contour, hull):
 
     # Calcolo il rettangolo contenente il contour e trovo il centro della mano in maniera
     # proporzionale all'altezza del rettangolo
-    bounding_r = cv2.boundingRect(hull)
+    bounding_r = cv2.boundingRect(contour)
     center = (int(bounding_r[0]+bounding_r[2]/2), int(bounding_r[1]+bounding_r[3]/2-bounding_r[3]*0.17))
     cv2.rectangle(contoured_frame, (int(bounding_r[0]), int(bounding_r[1])), (int(bounding_r[0]+bounding_r[2]), int(bounding_r[1]+bounding_r[3])), (255,0,0), 2)
     cv2.circle(contoured_frame, center, 8, [211, 84, 0], -1)
 
-    # Filtro i punti trovati in base alla loro distanza dal centro della mano per omettere valori spuri
     final_fingers = []
     for i in range(len(fingers)):
         # print("DISTANCE",np.linalg.norm(np.array(fingers[i])-np.array([bounding_r[0]+bounding_r[2]/2, bounding_r[1]+bounding_r[3]/2])))
-        if np.linalg.norm(np.array(fingers[i])-np.array(center))<230:
+        if np.linalg.norm(np.array(fingers[i])-np.array(center))<=230:
             final_fingers.append(fingers[i])
+    cv2.circle(contoured_frame, center, 230, [222, 111, 77], 3)
 
     return final_fingers
 
 def findFingers(frame, contour, hull):
 
-    hull_idx = cv2.convexHull(selected_cnt, returnPoints=False)
-    defects = cv2.convexityDefects(selected_cnt, hull_idx)
+    hull_idx = cv2.convexHull(contour, returnPoints=False)
+    defects = cv2.convexityDefects(contour, hull_idx)
 
     fingers_top = getAllFingerTop(defects, contour)
 
@@ -125,11 +143,12 @@ if __name__ == "__main__":
     # low_H = 0;  high_H = 11;
     # low_S = 117;  high_S = 255;
     # low_V = 20;  high_V = 255;
+    # TODO: Cambiare start ed end point in funzione della risoluzione del frame
     start_point = (700, 300)
     end_point = (850, 450)
 
-    # cv2.namedWindow("GLOVE", cv2.WND_PROP_FULLSCREEN)
-    # cv2.setWindowProperty("GLOVE", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+    cv2.namedWindow("GLOVE", cv2.WND_PROP_FULLSCREEN)
+    cv2.setWindowProperty("GLOVE", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
 
     while True:
         frame = webcam.getNextFrame()
@@ -142,6 +161,7 @@ if __name__ == "__main__":
 
         if detected == 0:
             cv2.rectangle(frame, start_point, end_point, (0,255,0), 2)
+            cv2.imshow("GLOVE",frame)
 
         else:
             frame_threshold = cv2.inRange(frame_HSV, (low_H, low_S, low_V), (high_H, high_S, high_V))
@@ -167,9 +187,8 @@ if __name__ == "__main__":
             for i in range(len(fingers_t)):
                 cv2.circle(contoured_frame, fingers_t[i], 8, [255, 0, 0], -1);
 
-            cv2.imshow("CONTOUR",contoured_frame)
+            cv2.imshow("GLOVE",contoured_frame)
 
-        cv2.imshow("GLOVE",frame)
         k = cv2.waitKey(10)
         if k == ord('q'):
             break;
