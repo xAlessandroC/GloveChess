@@ -1,7 +1,7 @@
 import sys
 import os
 import signal
-import ARChess_application as main
+import register_functions as main
 
 from chessboard import *
 from executer import *

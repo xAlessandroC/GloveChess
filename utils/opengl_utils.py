@@ -1,5 +1,6 @@
 from OpenGL.GL import *
 import pieces_data as pieces_data
+import glut_application as glta
 from piece import *
 import numpy as np
 import copy
@@ -135,7 +136,7 @@ def updateChessboard(current, previous):
 
         del pieces_data.PIECES_POSITION[str(from_[0])+"-"+str(from_[1])]
         obj = pieces_data.PIECES_DICT[pieces_data.PIECES_CONV[previous[from_[0],from_[1]].name]]
-        new_vertices = translateVertices(id, obj, *tuple(centers[to_[0],to_[1]]), z=2)
+        new_vertices = translateVertices(id, obj, *tuple(glta.centers[to_[0],to_[1]]), z=2)
         overwriteList(id, obj, new_vertices)
         pieces_data.PIECES_POSITION[str(to_[0])+"-"+str(to_[1])] = id
 

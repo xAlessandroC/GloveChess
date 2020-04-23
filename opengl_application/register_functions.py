@@ -1,15 +1,25 @@
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
+import threading
+import guanto_segm
 import config as config
 import pieces_data as pieces_data
 import glut_application as glta
 
-import guanto_segm
+from threading import Thread
 from pieces_data import *
 from calibration import *
 from findCenters import *
+from player import *
 from aruco import *
+
+lock = None
+condition = None
+termination = None
+
+playerW = None
+playerB = None
 
 def idle(args):
     img = args[0]
@@ -24,6 +34,9 @@ def idle(args):
 def systemExit(args):
     for key in pieces_data.PIECES_POSITION.keys():
         glDeleteLists(pieces_data.PIECES_POSITION[key], 1)
+
+    playerW.terminate()
+    playerB.terminate()
 
     glta.webcam.release()
     glutLeaveMainLoop()
@@ -71,30 +84,28 @@ def colorDetection(args):
     config.state="LOADING"
 
 def loading(args):
+    global lock, condition, termination, playerW, playerB
 
     glta._chessboard = Chessboard.getInstance()
-
-    c = findCenters()
-    c = c.reshape(8,8,2)
-    c = np.flip(c,1)
-    c = np.flip(c,0)
-    glta.centers = c
-
-    # TODO: Thread??
-    init_piece(glta.centers)
-
     glta.current = glta._chessboard.getPieces()
 
     # TODO: Caricamento giocatori
+    lock = threading.Lock()
+    condition = threading.Condition(lock)
+    termination = False
+
+    playerW = Player("WHITE")
+    playerB = Player("BLACK")
+    playerW.start()
+    playerB.start()
 
     config.state="PLAYING"
 
 def render(args):
-    global texture_background
-    updateChessboard(glta.current, glta.previous)
-
     img = args[0]
-    current = glta._chessboard.getPieces()
+    glta.current = glta._chessboard.getPieces()
+
+    updateChessboard(glta.current, glta.previous)
     rvec, tvec, img = detect(img, config.camera_matrix, config.dist_coefs)
     h, w = img.shape[:2]
 
@@ -152,7 +163,7 @@ def render(args):
 
     glPopMatrix()
 
-    glta.previous = current
+    glta.previous = glta.current
 
 def loadBackground(img):
     h, w = img.shape[:2]

@@ -70,13 +70,8 @@ def keyboard(key, x, y):
     global selector_x, selector_y, obj_s
 
     bkey = key.decode("utf-8")
-    # print("KEY:", bkey)
     if bkey == "q":
-        for key in pieces_data.PIECES_POSITION.keys():
-            glDeleteLists(pieces_data.PIECES_POSITION[key], 1)
-
-        webcam.release()
-        glutLeaveMainLoop()
+        config.state="EXIT"
     elif bkey == "d":
         config.state="DETECTION"
 
@@ -104,6 +99,13 @@ def init_param():
 
     webcam = Webcam(0)
 
+    _chessboard = Chessboard.getInstance()
+
+    centers = findCenters()
+    centers = centers.reshape(8,8,2)
+    centers = np.flip(centers,1)
+    centers = np.flip(centers,0)
+
 def init_gl():
     global texture_background
 
@@ -122,6 +124,7 @@ def init_gl():
 # APPLICATION
 def init_application():
     init_param()
+    init_piece(centers)
     init_gl()
 
 def init_glContext():
