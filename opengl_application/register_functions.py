@@ -11,7 +11,9 @@ from threading import Thread
 from pieces_data import *
 from calibration import *
 from findCenters import *
-from player import *
+from thread_p import *
+from human_player import *
+from IA_player import *
 from aruco import *
 
 lock = None
@@ -94,8 +96,10 @@ def loading(args):
     condition = threading.Condition(lock)
     termination = False
 
-    playerW = Player("WHITE")
-    playerB = Player("BLACK")
+    human = HumanPlayer("WHITE")
+    ia = IAPlayer("BLACK")
+    playerW = Thread_P(human)
+    playerB = Thread_P(ia)
     playerW.start()
     playerB.start()
 
