@@ -9,6 +9,7 @@ class Webcam():
         # cap.set(cv2.CAP_PROP_FPS, 30)
         self.webcam.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
         self.webcam.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+        self.last = None
 
 
     def getNextFrame(self):
@@ -20,7 +21,11 @@ class Webcam():
                 self.release()
                 return None
 
+            self.last = frame
             return frame
+
+    def getLastFrame(self):
+        return self.last
 
     def release(self):
         self.webcam.release()

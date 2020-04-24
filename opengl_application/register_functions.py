@@ -12,6 +12,7 @@ from pieces_data import *
 from calibration import *
 from findCenters import *
 from thread_p import *
+from contatore import *
 from human_player import *
 from IA_player import *
 from aruco import *
@@ -22,6 +23,7 @@ termination = None
 
 playerW = None
 playerB = None
+cnt = None
 
 def idle(args):
     img = args[0]
@@ -37,9 +39,11 @@ def systemExit(args):
     for key in pieces_data.PIECES_POSITION.keys():
         glDeleteLists(pieces_data.PIECES_POSITION[key], 1)
 
-    playerW.terminate()
-    playerB.terminate()
+    if playerW != None and playerB != None:
+        playerW.terminate()
+        playerB.terminate()
 
+    cnt.terminate()
     glta.webcam.release()
     glutLeaveMainLoop()
 
@@ -86,7 +90,7 @@ def colorDetection(args):
     config.state="LOADING"
 
 def loading(args):
-    global lock, condition, termination, playerW, playerB
+    global lock, condition, termination, playerW, playerB, cnt
 
     glta._chessboard = Chessboard.getInstance()
     glta.current = glta._chessboard.getPieces()
@@ -96,18 +100,24 @@ def loading(args):
     condition = threading.Condition(lock)
     termination = False
 
-    human = HumanPlayer("WHITE")
-    ia = IAPlayer("BLACK")
-    playerW = Thread_P(human)
-    playerB = Thread_P(ia)
-    playerW.start()
-    playerB.start()
+    # human = HumanPlayer("WHITE")
+    # ia = IAPlayer("BLACK")
+    # playerW = Thread_P(human)
+    # playerB = Thread_P(ia)
+    # playerW.start()
+    # playerB.start()
+
+    cnt = Thread_A()
+    cnt.start()
 
     config.state="PLAYING"
 
 def render(args):
     img = args[0]
     glta.current = glta._chessboard.getPieces()
+
+    glta.count = glta.count + 1
+    print("[DRAW]: Frame", glta.count)
 
     updateChessboard(glta.current, glta.previous)
     rvec, tvec, img = detect(img, config.camera_matrix, config.dist_coefs)
