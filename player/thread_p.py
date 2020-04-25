@@ -35,14 +35,6 @@ class Thread_P(Thread):
             elif currentTurn == self.typeOfPlayer.name:
                 self.typeOfPlayer.doMove()
 
-                #########################################
-                try:
-                    _chessboard.increment_turn()
-                except:
-                    print("saltato per aria")
-                    pass
-                #########################################
-
                 main.condition.notifyAll()
                 main.condition.release()
 

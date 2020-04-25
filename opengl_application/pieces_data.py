@@ -2,6 +2,7 @@ import os
 from objloader_complete import *
 from chessboard import *
 from opengl_utils import *
+import glut_application as glta
 
 ## PIECES
 PIECES_CONV = {
@@ -48,7 +49,7 @@ def load_pieces():
     print(PIECES_DICT)
 
 def init_piece(centers):
-    global obj_s, id_selectionSprite, id_chessboardList
+    global id_selectionSprite, id_chessboardList
 
     _chessboard = Chessboard.getInstance()
     pieces = _chessboard.getPieces()
@@ -72,9 +73,9 @@ def init_piece(centers):
 
     ## Carico puntatore per la selezione
     id_selectionSprite = glGenLists(1)
-    obj_s = PIECES_DICT["Puntatore"]
-    new_vertices = translateVertices(id_selectionSprite, obj_s, *tuple(centers[0,0]), z=13)
-    overwriteList(id_selectionSprite, obj_s, new_vertices)
+    glta.obj_s = PIECES_DICT["Puntatore"]
+    new_vertices = translateVertices(id_selectionSprite, glta.obj_s, *tuple(centers[0,0]), z=13)
+    overwriteList(id_selectionSprite, glta.obj_s, new_vertices)
 
 if __name__ == "__main__":
     load_pieces()

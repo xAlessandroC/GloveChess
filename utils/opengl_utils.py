@@ -37,7 +37,7 @@ def translateVertices(id_list, obj, x=0, y=0, z=0):
     return new_vertices
 
 def overwriteList(id_list, obj, new_vertices):
-
+    
     glNewList(id_list, GL_COMPILE)
     glEnable(GL_TEXTURE_2D)
     glFrontFace(GL_CCW)
@@ -64,14 +64,14 @@ def overwriteList(id_list, obj, new_vertices):
     glEndList()
 
 def nearestCenter(centers, x, y, z):
-    print("point:",(x,y))
+    # print("point:",(x,y))
     for i in range(centers.shape[0]):
         for j in range(centers.shape[1]):
             center = centers[i,j]
             point = np.array([x,y])
 
             distance = np.linalg.norm(center-point)
-            print("distance from ",center,"=",distance)
+            # print("distance from ",center,"=",distance)
 
             if distance < 2.5:
                 return (i,j)

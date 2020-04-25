@@ -5,6 +5,7 @@ import time
 import random
 import pieces_data as pieces_data
 import config as config
+from queue import *
 
 from OpenGL.GL import *
 from OpenGL.GLU import *
@@ -20,6 +21,7 @@ from mouse_interaction import *
 from chessboard import *
 from executer import *
 from piece import *
+
 
 
 ###############################
@@ -53,6 +55,9 @@ selector_y = 0
 
 current_mvm = None
 m_old = np.zeros((4,4))
+
+queue_A = Queue()
+queue_B = Queue()
 ###############################
 
 ###############################
@@ -74,7 +79,6 @@ def keyboard(key, x, y):
         config.state="EXIT"
     elif bkey == "d":
         config.state="DETECTION"
-
 
 def draw():
     global count
@@ -138,7 +142,7 @@ def init_glContext():
     glutCreateWindow("AR CHESS")
     glutDisplayFunc(draw)
     glutKeyboardFunc(keyboard)
-    glutMouseFunc(mouse)
+    # glutMouseFunc(mouse)
     glutIdleFunc(draw)
 
     glutFullScreen()

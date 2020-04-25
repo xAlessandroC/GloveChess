@@ -1,9 +1,4 @@
 import sys
-sys.path.append('/home/lorenzo/progetto_cv/AR_Chess/model')
-sys.path.append('/home/lorenzo/progetto_cv/AR_Chess/opengl_application')
-sys.path.append('/home/lorenzo/progetto_cv/AR_Chess/aruco_markerdetection')
-sys.path.append('/home/lorenzo/progetto_cv/AR_Chess/utils')
-sys.path.append('/home/lorenzo/progetto_cv/AR_Chess/player')
 
 import cv2
 import numpy as np
@@ -12,6 +7,7 @@ from matplotlib import pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 from matplotlib import colors
+import config as config
 
 
 low_H = 0;  high_H = 50
@@ -84,10 +80,15 @@ def getAllFingerTop(defects, selected_cnt):
     return fingers
 
 ##################### MAIN FUNCTION ########################
+i = 0
 def finger_detection(frame):
+    global i
     frame_HSV = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
-    frame_threshold = cv2.inRange(frame_HSV, (low_H, low_S, low_V), (high_H, high_S, high_V))
+    if i == 0:
+        print("THRESHOLD", config.low_th, config.high_th)
+        i = 1
+    frame_threshold = cv2.inRange(frame_HSV, (config.low_th[0],config.low_th[1],config.low_th[2]), (config.high_th[0],config.high_th[1],config.high_th[2]))
     # frame_result = segmentation(frame, frame_threshold)
 
     ## Find fingers

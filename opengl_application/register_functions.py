@@ -16,14 +16,18 @@ from contatore import *
 from human_player import *
 from IA_player import *
 from aruco import *
+from mouse_interaction import *
 
 lock = None
 condition = None
-termination = None
+lock_img = None
+condition_img = None
 
 playerW = None
 playerB = None
 cnt = None
+
+coords = []
 
 def idle(args):
     img = args[0]
@@ -50,6 +54,7 @@ def systemExit(args):
 
 def colorDetection(args):
     img = args[0]
+    img = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
 
     offset_H = 10
     offset_S = 70
@@ -61,6 +66,7 @@ def colorDetection(args):
     mean = np.mean(sub_image, axis = (0,1))
 
     print(offset_S, offset_H)
+    print(mean)
     low_th = [mean[0]-offset_H, mean[1]-offset_S, 20]
     high_th = [mean[0]+offset_H, mean[1]+offset_S, 255]
 
@@ -90,7 +96,7 @@ def colorDetection(args):
     config.state="LOADING"
 
 def loading(args):
-    global lock, condition, termination, playerW, playerB, cnt
+    global lock, condition, lock_img, condition_img, playerW, playerB, cnt
 
     glta._chessboard = Chessboard.getInstance()
     glta.current = glta._chessboard.getPieces()
@@ -98,28 +104,35 @@ def loading(args):
     # TODO: Caricamento giocatori
     lock = threading.Lock()
     condition = threading.Condition(lock)
-    termination = False
 
-    # human = HumanPlayer("WHITE")
-    # ia = IAPlayer("BLACK")
-    # playerW = Thread_P(human)
-    # playerB = Thread_P(ia)
-    # playerW.start()
-    # playerB.start()
+    lock_img = threading.Lock()
+    # condition_img = threading.Condition(lock_img)
 
-    cnt = Thread_A()
-    cnt.start()
+
+    human = HumanPlayer("WHITE")
+    ia = IAPlayer("BLACK")
+    playerW = Thread_P(human)
+    playerB = Thread_P(ia)
+    playerW.start()
+    playerB.start()
+
+    # cnt = Thread_A()
+    # cnt.start()
 
     config.state="PLAYING"
 
 def render(args):
     img = args[0]
+    glta.count = glta.count + 1
+    # print("[DRAW]: Frame", glta.count)
+    if lock_img.locked() == True:
+        lock_img.release()
+    # print("[DRAW]: Svegliato")
+
     glta.current = glta._chessboard.getPieces()
 
-    glta.count = glta.count + 1
-    print("[DRAW]: Frame", glta.count)
-
     updateChessboard(glta.current, glta.previous)
+    updateSelector()
     rvec, tvec, img = detect(img, config.camera_matrix, config.dist_coefs)
     h, w = img.shape[:2]
 
