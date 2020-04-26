@@ -22,16 +22,17 @@ def findFingers(frame, contour, hull):
 
     fingers_top = getAllFingerTop(defects, contour)
 
-    filtered_fingers = fingerFilter(frame, fingers_top, contour, hull)
+    filtered_fingers, bounding_r = fingerFilter(frame, fingers_top, contour, hull)
 
-    return filtered_fingers
+    return filtered_fingers, bounding_r
 
 def fingerFilter(contoured_frame, fingers, contour, hull):
 
     # Calcolo il rettangolo contenente il contour e trovo il centro della mano in maniera
     # proporzionale all'altezza del rettangolo
     bounding_r = cv2.boundingRect(hull)
-    center = (int(bounding_r[0] + bounding_r[2] / 2), int(bounding_r[1] + bounding_r[3] / 2 - bounding_r[3] * 0.17))
+    # center = (int(bounding_r[0] + bounding_r[2] / 2), int(bounding_r[1] + bounding_r[3] / 2 - bounding_r[3] * 0.17))
+    center = (int(bounding_r[0] + bounding_r[2] / 2), int(bounding_r[1] + bounding_r[3] / 2))
     cv2.rectangle(contoured_frame, (int(bounding_r[0]), int(bounding_r[1])), (int(bounding_r[0] + bounding_r[2]), int(bounding_r[1] + bounding_r[3])), (255,0,0), 2)
     cv2.circle(contoured_frame, center, 8, [211, 84, 0], -1)
 
@@ -42,7 +43,7 @@ def fingerFilter(contoured_frame, fingers, contour, hull):
         if np.linalg.norm(np.array(fingers[i]) - np.array(center)) < 230:
             final_fingers.append(fingers[i])
 
-    return final_fingers
+    return final_fingers, bounding_r
 
 def getAllFingerTop(defects, selected_cnt):
     fingers = []
@@ -101,9 +102,13 @@ def finger_detection(frame):
             maxArea = area
             idx = i
 
-    selected_cnt = contours[idx]
-    contoured_frame = np.copy(frame)
-    hull = cv2.convexHull(selected_cnt)
+    # print("CONTOUR",idx)
+    if idx != -1:
+        selected_cnt = contours[idx]
+        contoured_frame = np.copy(frame)
+        hull = cv2.convexHull(selected_cnt)
 
-    fingers_t = findFingers(contoured_frame, selected_cnt, hull)
-    return fingers_t
+        fingers_t, bounding_r = findFingers(contoured_frame, selected_cnt, hull)
+        return fingers_t, bounding_r
+    else:
+        return []

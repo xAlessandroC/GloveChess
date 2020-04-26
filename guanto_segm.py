@@ -84,7 +84,7 @@ def fingerFilter(contoured_frame, fingers, contour, hull):
     # Calcolo il rettangolo contenente il contour e trovo il centro della mano in maniera
     # proporzionale all'altezza del rettangolo
     bounding_r = cv2.boundingRect(contour)
-    center = (int(bounding_r[0]+bounding_r[2]/2), int(bounding_r[1]+bounding_r[3]/2-bounding_r[3]*0.17))
+    center = (int(bounding_r[0]+bounding_r[2]/2), int(bounding_r[1]+bounding_r[3]/2))
     cv2.rectangle(contoured_frame, (int(bounding_r[0]), int(bounding_r[1])), (int(bounding_r[0]+bounding_r[2]), int(bounding_r[1]+bounding_r[3])), (255,0,0), 2)
     cv2.circle(contoured_frame, center, 8, [211, 84, 0], -1)
 
@@ -95,7 +95,7 @@ def fingerFilter(contoured_frame, fingers, contour, hull):
             final_fingers.append(fingers[i])
     cv2.circle(contoured_frame, center, 230, [222, 111, 77], 3)
 
-    return final_fingers
+    return (final_fingers, bounding_r)
 
 def findFingers(frame, contour, hull):
 
@@ -104,9 +104,9 @@ def findFingers(frame, contour, hull):
 
     fingers_top = getAllFingerTop(defects, contour)
 
-    filtered_fingers = fingerFilter(frame, fingers_top, contour, hull)
+    filtered_fingers, bounding_r = fingerFilter(frame, fingers_top, contour, hull)
 
-    return filtered_fingers
+    return filtered_fingers, bounding_r
 
 def start_segmentation(img):
     sub_image = img[start_point[1]:end_point[1], start_point[0]:end_point[0], :]
@@ -137,6 +137,37 @@ def start_segmentation(img):
     print("THRESHOLDS FOUND:", low_th, high_th)
 
     return tuple(low_th), tuple(high_th)
+
+def giveMeCorrectFinger(fingers, bounding_r):
+    k = -1
+    if bounding_r[2]>= bounding_r[3]:
+        k = 0
+    else:
+        k = 1
+
+    center = (int(bounding_r[0]+bounding_r[2]/2), int(bounding_r[1]+bounding_r[3]/2))
+    max = 0
+    min = 0
+    for i in range(len(fingers)):
+        if fingers[i][k] > center[k]:
+            max = max + 1
+        else:
+            min = min + 1
+
+    temp = None
+    print(np.array(fingers).shape)
+    print(np.array(fingers))
+    print(np.array(fingers)[:,k])
+
+    if max > min : temp = np.array(fingers)[:,k].max()
+    else:  temp = np.array(fingers)[:,k].min()
+
+    for i in range(len(fingers)):
+        if fingers[i][k] == temp:
+            return i
+
+
+    return -1
 
 if __name__ == "__main__":
     webcam = Webcam(0)
@@ -178,14 +209,21 @@ if __name__ == "__main__":
                     maxArea = area
                     idx = i
 
-            selected_cnt = contours[idx]
-            contoured_frame = np.copy(frame)
-            hull = cv2.convexHull(selected_cnt)
+            fingers_t = []
+            if idx != -1:
+                selected_cnt = contours[idx]
+                contoured_frame = np.copy(frame)
+                hull = cv2.convexHull(selected_cnt)
 
-            fingers_t = findFingers(contoured_frame, selected_cnt, hull)
+                fingers_t, bounding_r = findFingers(contoured_frame, selected_cnt, hull)
 
             for i in range(len(fingers_t)):
                 cv2.circle(contoured_frame, fingers_t[i], 8, [255, 0, 0], -1);
+
+            if len(fingers_t) >= 2:
+                n = giveMeCorrectFinger(fingers_t, bounding_r)
+                print("estremo", n)
+                cv2.circle(contoured_frame, fingers_t[n], 8, [255, 255, 0], -1);
 
             cv2.imshow("GLOVE",contoured_frame)
 

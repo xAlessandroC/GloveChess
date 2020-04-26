@@ -27,7 +27,7 @@ def isSimilar(vec, old_vec):
         return False
 
     result = np.absolute(np.subtract(vec, old_vec))
-    print("VEC RISULTANTE: ", result, result.shape)
+    # print("VEC RISULTANTE: ", result, result.shape)
 
     for k in range(len(result)):
         for i in range(len(result[k])):

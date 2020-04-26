@@ -21,9 +21,9 @@ class HumanPlayer(Player):
             if np.all(frame == self.previous) == False:
                 self.count = self.count + 1
                 # print("[HUMAN PLAYER]: Elaboro frame n", self.count)
-                fingers = finger_detection(frame)
+                fingers, bounding_r = finger_detection(frame)
 
-                result = extract_move(fingers)
+                result = extract_move(fingers, bounding_r)
 
             else:
                 # print("[HUMAN PLAYER]: wait...")
