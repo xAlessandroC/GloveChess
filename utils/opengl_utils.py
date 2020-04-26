@@ -37,7 +37,7 @@ def translateVertices(id_list, obj, x=0, y=0, z=0):
     return new_vertices
 
 def overwriteList(id_list, obj, new_vertices):
-    
+
     glNewList(id_list, GL_COMPILE)
     glEnable(GL_TEXTURE_2D)
     glFrontFace(GL_CCW)
@@ -83,26 +83,6 @@ def compositeArray(rvec, tvec):
     v = np.c_[rvec, tvec.T]
     v_ = np.r_[v, np.array([[0,0,0,1]])]
     return v_
-
-def matrixStabilizer(matrix, old_matrix):
-    similar_cnt = 0
-    dissimilar_cnt = 0
-    threshold = 0.03 #da testare
-
-    result = np.absolute(np.subtract(matrix, old_matrix))
-    # print("MATRICE RISULTANTE: ", result)
-
-    for i in range(4):
-        for j in range(4):
-            if result[i][j] < threshold:
-                similar_cnt += 1
-            else:
-                dissimilar_cnt +=1
-
-    if similar_cnt > dissimilar_cnt:
-        return old_matrix
-    else:
-        return matrix
 
 def updateChessboard(current, previous):
     if (len(current) == 0 or len(previous) == 0):

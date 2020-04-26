@@ -134,6 +134,8 @@ def render(args):
     updateChessboard(glta.current, glta.previous)
     updateSelector()
     rvec, tvec, img = detect(img, config.camera_matrix, config.dist_coefs)
+    # print("RVEC:", rvec.shape, rvec)
+    # print("TVEC:", tvec.shape, tvec)
     h, w = img.shape[:2]
 
     loadBackground(img)
@@ -161,7 +163,7 @@ def render(args):
     # glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, [0.0,0.0,1.0,1.0])
     lightfv = ctypes.c_float * 4
     glLightfv(GL_LIGHT0, GL_POSITION, lightfv(-1.0, 1.0, 1.0, 0.0))
-    if len(rvec) != 0:
+    if len(rvec[0]) != 0 and len(tvec[0]) != 0:
         # fix axis
         tvec[0][0][0] = tvec[0][0][0]
         tvec[0][0][1] = -tvec[0][0][1]
@@ -170,8 +172,6 @@ def render(args):
         rvec[0][0][1] = -rvec[0][0][1]
         rvec[0][0][2] = -rvec[0][0][2]
         m = compositeArray(cv2.Rodrigues(rvec)[0], tvec[0][0])
-        # stabilizza
-        m = matrixStabilizer(m, glta.m_old) ##NN
 
         glPushMatrix()
         glLoadMatrixd(m.T)
@@ -186,7 +186,6 @@ def render(args):
             glCallList(pieces_data.PIECES_POSITION[key])
 
         glPopMatrix()
-        glta.m_old = m.copy()
 
     glPopMatrix()
 
