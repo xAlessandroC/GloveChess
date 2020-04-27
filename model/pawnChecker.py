@@ -60,5 +60,6 @@ class PawnChecker(Checker):
             if chessboard.from_index_to_piece(toCell) == Piece.EMPTY.name:
                 raise Exception("[RuleException]: Movimento diagonale!")
 
+            return True
 
-        return True
+    raise Exception("[RuleException]: Mossa errata!")
