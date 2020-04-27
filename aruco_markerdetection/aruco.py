@@ -5,6 +5,7 @@ from utils.rendering import *
 from marker_utils import *
 
 aruco_dict = aruco.Dictionary_get(aruco.DICT_6X6_250)
+size_marker = 8.0
 
 def detect(frame, camera_matrix, dist_coefs):
     frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -18,7 +19,7 @@ def detect(frame, camera_matrix, dist_coefs):
     rvec = []
     tvec = []
     if corners != []:
-        rvecs, tvecs, _ = aruco.estimatePoseSingleMarkers(corners, 8.0, camera_matrix, dist_coefs)
+        rvecs, tvecs, _ = aruco.estimatePoseSingleMarkers(corners, size_marker, camera_matrix, dist_coefs)
         rvec = rvecs[0]
         tvec = tvecs[0]
         rendered_img = aruco.drawAxis(rendered_img, camera_matrix, dist_coefs, rvec, tvec, 10.0)

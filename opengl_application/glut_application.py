@@ -5,6 +5,7 @@ import time
 import random
 import pieces_data as pieces_data
 import config as config
+import aruco as aruco_config
 from queue import *
 
 from OpenGL.GL import *
@@ -79,6 +80,12 @@ def keyboard(key, x, y):
         config.state="EXIT"
     elif bkey == "d":
         config.state="DETECTION"
+    elif bkey == "o":
+        if aruco_config.size_marker > 1:
+            aruco_config.size_marker = aruco_config.size_marker - 0.5
+    elif bkey == "l":
+        if aruco_config.size_marker < 14:
+            aruco_config.size_marker = aruco_config.size_marker + 0.5
 
 def draw():
     global count

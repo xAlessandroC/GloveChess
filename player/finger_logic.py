@@ -47,7 +47,7 @@ def extract_move(fingers, bounding_r):
             try:
                 checkAndExecuteMove(from_m, to_m)
                 result = True
-            except e:
+            except Exception as e:
                 print(e)
 
             from_f = None
