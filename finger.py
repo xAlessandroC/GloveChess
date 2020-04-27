@@ -81,14 +81,14 @@ def getAllFingerTop(defects, selected_cnt):
     return fingers
 
 ##################### MAIN FUNCTION ########################
-i = 0
+p = 0
 def finger_detection(frame):
-    global i
+    global p
     frame_HSV = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
-    if i == 0:
+    if p == 0:
         print("THRESHOLD", config.low_th, config.high_th)
-        i = 1
+        p = 1
     frame_threshold = cv2.inRange(frame_HSV, (config.low_th[0],config.low_th[1],config.low_th[2]), (config.high_th[0],config.high_th[1],config.high_th[2]))
     # frame_result = segmentation(frame, frame_threshold)
 
@@ -111,4 +111,4 @@ def finger_detection(frame):
         fingers_t, bounding_r = findFingers(contoured_frame, selected_cnt, hull)
         return fingers_t, bounding_r
     else:
-        return []
+        return ([],[])

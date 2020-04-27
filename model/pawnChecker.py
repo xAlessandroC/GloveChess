@@ -62,4 +62,4 @@ class PawnChecker(Checker):
 
             return True
 
-    raise Exception("[RuleException]: Mossa errata!")
+        raise Exception("[RuleException]: Mossa errata!")
