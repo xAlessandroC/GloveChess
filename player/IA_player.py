@@ -11,7 +11,7 @@ class IAPlayer(Player):
 
     def doMove(self):
         print("ciao IA")
-        
+
         # Prendere lo stato attuale
         _chessboard = Chessboard.getInstance().getPieces()
 
@@ -20,3 +20,4 @@ class IAPlayer(Player):
 
         # Effettua la mossa
         print(move)
+        checkAndExecuteMove(move.getFrom(), move.getTo())

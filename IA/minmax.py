@@ -21,15 +21,15 @@ def minmax(state, max_depth, role):
 def max_value(node, current_depth, max_depth, alpha, beta, role):
 
     if current_depth == max_depth - 1:
-        return heuristic(node) # TODO: fare euristica
+        return heuristic(node, role) # TODO: fare euristica
 
-    possible_moves = getPossibleMoves(node, role) # TODO: fare metodo getPossibleMoves
+    possible_moves = getPossibleMoves(node, role)
 
     node_value = -math.inf
 
     for move in possible_moves:
 
-        next_state = nextState(node, state) # TODO: fare metodo nextState
+        next_state = nextState(node, move) # TODO: fare metodo nextState
         child_node = Node(next_state)
 
         node_value = math.max(node_value, min_value(child_node, current_depth + 1, max_depth, alpha, beta))
@@ -51,13 +51,13 @@ def min_value(node, current_depth, max_depth, alpha, beta, role):
     if current_depth == max_depth - 1:
         return heuristic(node) # TODO: fare euristica
 
-    possible_moves = getPossibleMoves(node, role) # TODO: fare metodo getPossibleMoves
+    possible_moves = getPossibleMoves(node, role)
 
     node_value = math.inf
 
     for move in possible_moves:
 
-        next_state = nextState(node, move) # TODO: fare metodo nextState
+        next_state = nextState(node, move)
         child_node = Node(next_state)
 
         node_value = math.min(node_value, max_value(child_node, current_depth + 1, max_depth, alpha, beta))
