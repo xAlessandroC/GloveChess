@@ -4,6 +4,7 @@ sys.path.append('./opengl_application/')
 sys.path.append('./aruco_markerdetection/')
 sys.path.append('./utils/')
 sys.path.append('./player/')
+sys.path.append('./IA/')
 
 import config as config
 import threading
