@@ -1,5 +1,7 @@
 from OpenGL.GL import *
 import pieces_data as pieces_data
+import glut_application as glta
+from piece import *
 import numpy as np
 import copy
 
@@ -62,17 +64,60 @@ def overwriteList(id_list, obj, new_vertices):
     glEndList()
 
 def nearestCenter(centers, x, y, z):
-    print("point:",(x,y))
+    # print("point:",(x,y))
     for i in range(centers.shape[0]):
         for j in range(centers.shape[1]):
             center = centers[i,j]
             point = np.array([x,y])
 
             distance = np.linalg.norm(center-point)
-            print("distance from ",center,"=",distance)
+            # print("distance from ",center,"=",distance)
 
             if distance < 2.5:
                 return (i,j)
 
 
     return (-1,-1)
+
+def compositeArray(rvec, tvec):
+    v = np.c_[rvec, tvec.T]
+    v_ = np.r_[v, np.array([[0,0,0,1]])]
+    return v_
+
+def updateChessboard(current, previous):
+    if (len(current) == 0 or len(previous) == 0):
+        return
+
+    result = np.zeros((8,8))
+    for i in range(8):
+        for j in range(8):
+            result[i,j] = previous[i,j].value - current[i,j].value
+
+    ## Aggiorno dizionario
+    from_ = []
+    to_ = []
+    capture = []
+    for i in range(8):
+        for j in range(8):
+            if result[i,j]!=0 and previous[i,j]!=Piece.EMPTY and current[i,j]!=Piece.EMPTY:
+                capture = True
+                to_= (i,j)
+            elif result[i,j]<0 and (previous[i,j]!=Piece.EMPTY or current[i,j]!=Piece.EMPTY):
+                from_= (i,j)
+            elif result[i,j]!=0:
+                to_= (i,j)
+
+    if from_!=[] and to_!=[]:
+        print(pieces_data.PIECES_POSITION)
+        id = pieces_data.PIECES_POSITION[str(from_[0])+"-"+str(from_[1])]
+
+        if capture == True:
+            glDeleteLists(id, 1)
+
+        del pieces_data.PIECES_POSITION[str(from_[0])+"-"+str(from_[1])]
+        obj = pieces_data.PIECES_DICT[pieces_data.PIECES_CONV[previous[from_[0],from_[1]].name]]
+        new_vertices = translateVertices(id, obj, *tuple(glta.centers[to_[0],to_[1]]), z=2)
+        overwriteList(id, obj, new_vertices)
+        pieces_data.PIECES_POSITION[str(to_[0])+"-"+str(to_[1])] = id
+
+        print(pieces_data.PIECES_POSITION)

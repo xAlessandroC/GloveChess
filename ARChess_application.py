@@ -12,11 +12,6 @@ from glut_application import *
 from pieces_data import *
 from player import *
 
-_chessboard = Chessboard.getInstance()
-lock = threading.Lock()
-condition = threading.Condition(lock)
-termination = False
-
 if __name__ == "__main__":
     print("Starting application...")
 
@@ -31,18 +26,5 @@ if __name__ == "__main__":
 
     init_application()
 
-    # PLAYERS
-    playerW = Player("WHITE")
-    playerB = Player("BLACK")
-
-    playerW.start()
-    playerB.start()
-
     # OPENGL_APP
     start_application()
-
-    # Chiusura Threads
-    termination = True
-
-    playerW.terminate()
-    playerB.terminate()

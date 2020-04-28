@@ -7,7 +7,7 @@ length_y = 4.5
 
 def findCenters():
 
-    scacchiera = OBJSimple(config.obj_path)
+    scacchiera = OBJSimple("resources/chess_models/Scacchiera/10586_Chess_Board_v2_Iterations-2.obj")
 
     vertices = np.array(scacchiera.vertices).astype(np.float32)
 
