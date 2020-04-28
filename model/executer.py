@@ -1,6 +1,5 @@
 from chessboard import *
 from model_utils import *
-from queenChecker import *
 
 def checkAndExecuteMove(fromCell, toCell):
     chessboard = Chessboard.getInstance()
@@ -24,12 +23,22 @@ def checkAndExecuteMove(fromCell, toCell):
         raise Exception("[WrongMoveException]: Non stai muovendo niente")
 
     #Controllo che il pezzo rispetti le proprie regole
-    checkerName = selectedPiece[2:].lower() + "Checker"
-    module = __import__(checkerName)
-    class_ = getattr(module, checkerName[0].upper()+checkerName[1:])
+    generatorName = selectedPiece[2:].lower() + "Generator"
+    module = __import__(generatorName)
+    class_ = getattr(module, generatorName[0].upper()+generatorName[1:])
     instance = class_()
 
-    if instance.checkMove(fromCell, toCell):
+    possibleMoves = instance.generateMoves(fromCell)
+    res = False
+    print("MOVES:", possibleMoves)
+    for move in possibleMoves:
+        t = from_matrix_to_chessboard(move)
+        print("MOVE: ",t)
+        if t == toCell:
+            print("CORRETTA:",t)
+            res = True
+
+    if res == True:
         ##Aggiorno chessboard
         chessboard.update(fromCell,toCell)
         if destPiece[2:] == "KING":
@@ -39,7 +48,3 @@ def checkAndExecuteMove(fromCell, toCell):
             chessboard.increment_turn()
 
         return True
-
-
-# Chessboard.getInstance()
-# print(checkAndExecuteMove("a2","b3"))
