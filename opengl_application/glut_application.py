@@ -24,15 +24,15 @@ from executer import *
 from piece import *
 
 
-
+#TODO: pushare risorse nuove
 ###############################
 # GLOBAL VARIABLES
 texture_background = None
 chess_piece = None
 webcam = None
 
-windowWidth = 1280
-windowHeight = 720
+windowWidth = 900
+windowHeight = 506
 
 f = 1000.0
 n = 1.0
@@ -49,10 +49,6 @@ current = []
 previous = []
 
 count = 0
-
-obj_s = None
-selector_x = 0
-selector_y = 0
 
 current_mvm = None
 m_old = np.zeros((4,4))
@@ -73,7 +69,6 @@ register = {
 ##############################
 
 def keyboard(key, x, y):
-    global selector_x, selector_y, obj_s
 
     bkey = key.decode("utf-8")
     if bkey == "q":
@@ -90,7 +85,12 @@ def keyboard(key, x, y):
 def draw():
     global count
     img = webcam.getNextFrame()
-    img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB) #BGR-->RGB
+
+    # Mostro il frame "puro" prima di utilizzarlo per le varie operazioni
+    cv2.namedWindow("Debug window",cv2.WINDOW_NORMAL)
+    cv2.resizeWindow("Debug window", 356,200)
+    cv2.imshow("Debug window",img)
+    img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
 
     register[config.state]([img])
 
@@ -149,7 +149,6 @@ def init_glContext():
     glutCreateWindow("AR CHESS")
     glutDisplayFunc(draw)
     glutKeyboardFunc(keyboard)
-    # glutMouseFunc(mouse)
     glutIdleFunc(draw)
 
     glutFullScreen()

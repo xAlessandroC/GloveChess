@@ -47,7 +47,6 @@ def systemExit(args):
         playerW.terminate()
         playerB.terminate()
 
-    cnt.terminate()
     glta.webcam.release()
     glutLeaveMainLoop()
 
@@ -101,7 +100,6 @@ def loading(args):
     glta._chessboard = Chessboard.getInstance()
     glta.current = glta._chessboard.getPieces()
 
-    # TODO: Caricamento giocatori
     lock = threading.Lock()
     condition = threading.Condition(lock)
 

@@ -11,7 +11,6 @@ class Webcam():
         self.webcam.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
         self.last = None
 
-
     def getNextFrame(self):
         if self.webcam.isOpened():
             ret, frame = self.webcam.read()
