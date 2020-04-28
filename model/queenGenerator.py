@@ -30,10 +30,10 @@ class QueenGenerator(Generator):
             if fromCell_matrix[0] + i < 8 and climb_1 == False:
                 to_cell = (fromCell_matrix[0] + i, fromCell_matrix[1])
 
-                if pieces[*to_cell] == Piece.EMPTY:
+                if pieces[to_cell] == Piece.EMPTY:
                     moves.append(to_cell)
 
-                elif pieces[*to_cell].name.startsWith(currentTurn) == False:
+                elif pieces[to_cell].name.startswith(currentTurn) == False:
                     moves.append(to_cell)
                     climb_1 = True
                 else:
@@ -43,10 +43,10 @@ class QueenGenerator(Generator):
             if fromCell_matrix[1] + i < 8 and climb_2 == False:
                 to_cell = (fromCell_matrix[0], fromCell_matrix[1] + i)
 
-                if pieces[*to_cell] == Piece.EMPTY:
+                if pieces[to_cell] == Piece.EMPTY:
                     moves.append(to_cell)
 
-                elif pieces[*to_cell].name.startsWith(currentTurn) == False:
+                elif pieces[to_cell].name.startswith(currentTurn) == False:
                     moves.append(to_cell)
                     climb_2 = True
                 else:
@@ -56,10 +56,10 @@ class QueenGenerator(Generator):
             if fromCell_matrix[0] - i >= 0 and climb_3 == False:
                 to_cell = (fromCell_matrix[0] - i, fromCell_matrix[1])
 
-                if pieces[*to_cell] == Piece.EMPTY:
+                if pieces[to_cell] == Piece.EMPTY:
                     moves.append(to_cell)
 
-                elif pieces[*to_cell].name.startsWith(currentTurn) == False:
+                elif pieces[to_cell].name.startswith(currentTurn) == False:
                     moves.append(to_cell)
                     climb_3 = True
                 else:
@@ -69,10 +69,10 @@ class QueenGenerator(Generator):
             if fromCell_matrix[1] - i >= 0 and climb_4 == False:
                 to_cell = (fromCell_matrix[0], fromCell_matrix[1] - i)
 
-                if pieces[*to_cell] == Piece.EMPTY:
+                if pieces[to_cell] == Piece.EMPTY:
                     moves.append(to_cell)
 
-                elif pieces[*to_cell].name.startsWith(currentTurn) == False:
+                elif pieces[to_cell].name.startswith(currentTurn) == False:
                     moves.append(to_cell)
                     climb_4 = True
                 else:
@@ -84,10 +84,10 @@ class QueenGenerator(Generator):
             if fromCell_matrix[0] + i < 8 and fromCell_matrix[1] + i < 8 and climb_5 == False:
                 to_cell = (fromCell_matrix[0] + i, fromCell_matrix[1] + i)
 
-                if pieces[*to_cell] == Piece.EMPTY:
+                if pieces[to_cell] == Piece.EMPTY:
                     moves.append(to_cell)
 
-                elif pieces[*to_cell].name.startsWith(currentTurn) == False:
+                elif pieces[to_cell].name.startswith(currentTurn) == False:
                     moves.append(to_cell)
                     climb_5 = True
                 else:
@@ -97,10 +97,10 @@ class QueenGenerator(Generator):
             if fromCell_matrix[0] - i >= 0 and fromCell_matrix[1] - i >= 0 and climb_6 == False:
                 to_cell = (fromCell_matrix[0] - i, fromCell_matrix[1] - i)
 
-                if pieces[*to_cell] == Piece.EMPTY:
+                if pieces[to_cell] == Piece.EMPTY:
                     moves.append(to_cell)
 
-                elif pieces[*to_cell].name.startsWith(currentTurn) == False:
+                elif pieces[to_cell].name.startswith(currentTurn) == False:
                     moves.append(to_cell)
                     climb_6 = True
                 else:
@@ -110,10 +110,10 @@ class QueenGenerator(Generator):
             if fromCell_matrix[0] + i < 8 and fromCell_matrix[1] - i >= 0 and climb_7 == False:
                 to_cell = (fromCell_matrix[0] + i, fromCell_matrix[1] - i)
 
-                if pieces[*to_cell] == Piece.EMPTY:
+                if pieces[to_cell] == Piece.EMPTY:
                     moves.append(to_cell)
 
-                elif pieces[*to_cell].name.startsWith(currentTurn) == False:
+                elif pieces[to_cell].name.startswith(currentTurn) == False:
                     moves.append(to_cell)
                     climb_7 = True
                 else:
@@ -123,10 +123,10 @@ class QueenGenerator(Generator):
             if fromCell_matrix[0] - i >= 0 and fromCell_matrix[1] + i < 8 and climb_8 == False:
                 to_cell = (fromCell_matrix[0] - i, fromCell_matrix[1] + i)
 
-                if pieces[*to_cell] == Piece.EMPTY:
+                if pieces[to_cell] == Piece.EMPTY:
                     moves.append(to_cell)
 
-                elif pieces[*to_cell].name.startsWith(currentTurn) == False:
+                elif pieces[to_cell].name.startswith(currentTurn) == False:
                     moves.append(to_cell)
                     climb_8 = True
                 else:

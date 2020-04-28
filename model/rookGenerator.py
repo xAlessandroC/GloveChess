@@ -25,10 +25,10 @@ class RookGenerator(Generator):
             if fromCell_matrix[0] + i < 8 and climb_1 == False:
                 to_cell = (fromCell_matrix[0] + i, fromCell_matrix[1])
 
-                if pieces[*to_cell] == Piece.EMPTY:
+                if pieces[to_cell] == Piece.EMPTY:
                     moves.append(to_cell)
 
-                elif pieces[*to_cell].name.startsWith(currentTurn) == False:
+                elif pieces[to_cell].name.startswith(currentTurn) == False:
                     moves.append(to_cell)
                     climb_1 = True
                 else:
@@ -38,10 +38,10 @@ class RookGenerator(Generator):
             if fromCell_matrix[1] + i < 8 and climb_2 == False:
                 to_cell = (fromCell_matrix[0], fromCell_matrix[1] + i)
 
-                if pieces[*to_cell] == Piece.EMPTY:
+                if pieces[to_cell] == Piece.EMPTY:
                     moves.append(to_cell)
 
-                elif pieces[*to_cell].name.startsWith(currentTurn) == False:
+                elif pieces[to_cell].name.startswith(currentTurn) == False:
                     moves.append(to_cell)
                     climb_2 = True
                 else:
@@ -51,10 +51,10 @@ class RookGenerator(Generator):
             if fromCell_matrix[0] - i >= 0 and climb_3 == False:
                 to_cell = (fromCell_matrix[0] - i, fromCell_matrix[1])
 
-                if pieces[*to_cell] == Piece.EMPTY:
+                if pieces[to_cell] == Piece.EMPTY:
                     moves.append(to_cell)
 
-                elif pieces[*to_cell].name.startsWith(currentTurn) == False:
+                elif pieces[to_cell].name.startswith(currentTurn) == False:
                     moves.append(to_cell)
                     climb_3 = True
                 else:
@@ -64,10 +64,10 @@ class RookGenerator(Generator):
             if fromCell_matrix[1] - i >= 0 and climb_4 == False:
                 to_cell = (fromCell_matrix[0], fromCell_matrix[1] - i)
 
-                if pieces[*to_cell] == Piece.EMPTY:
+                if pieces[to_cell] == Piece.EMPTY:
                     moves.append(to_cell)
 
-                elif pieces[*to_cell].name.startsWith(currentTurn) == False:
+                elif pieces[to_cell].name.startswith(currentTurn) == False:
                     moves.append(to_cell)
                     climb_4 = True
                 else:

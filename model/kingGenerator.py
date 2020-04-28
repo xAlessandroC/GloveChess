@@ -26,8 +26,7 @@ class KingGenerator(Generator):
         possibleMoves.append( (fromCell_matrix[0] - 1, fromCell_matrix[1] + 1) ) #  sx-up
 
         for to_cell in possibleMoves:
-            if to_cell[0]>= 0 and to_cell[0]<8 and to_cell[1]>= 0 and to_cell[1]<8 and
-               (pieces[*to_cell].name.startsWith(currentTurn) == False or pieces[*to_cell] == Piece.EMPTY):
+            if to_cell[0]>= 0 and to_cell[0]<8 and to_cell[1]>= 0 and to_cell[1]<8 and (pieces[to_cell].name.startswith(currentTurn) == False or pieces[to_cell] == Piece.EMPTY):
                 moves.append(to_cell)
 
         return moves
