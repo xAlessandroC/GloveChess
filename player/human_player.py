@@ -17,17 +17,10 @@ class HumanPlayer(Player):
         print("ciao HUMAN")
         result = False
         while result == False:
-            frame = glta.webcam.getLastFrame()
-            if np.all(frame == self.previous) == False:
-                self.count = self.count + 1
-                # print("[HUMAN PLAYER]: Elaboro frame n", self.count)
-                fingers, bounding_r = finger_detection(frame)
+            frame = glta.queue_img.get()
+            fingers, bounding_r = finger_detection(frame)
 
-                result = extract_move(fingers, bounding_r)
-
-            else:
-                # print("[HUMAN PLAYER]: wait...")
-                main.lock_img.acquire()
+            result = extract_move(fingers, bounding_r)
 
             self.previous = frame
 

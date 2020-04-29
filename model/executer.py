@@ -48,3 +48,5 @@ def checkAndExecuteMove(fromCell, toCell):
             chessboard.increment_turn()
 
         return True
+
+    raise Exception("[WrongMoveException]: Mossa errata")

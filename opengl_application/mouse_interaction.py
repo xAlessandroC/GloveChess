@@ -31,7 +31,6 @@ def getCell(pos_x, pos_y):
 
     x = int(pos_x * tw)
     y = int(pos_y * th)
-    print("POS:", x, y  )
 
     projMatrix_r = glGetDoublev(GL_PROJECTION_MATRIX)
     viewport_r = glGetIntegerv(GL_VIEWPORT)

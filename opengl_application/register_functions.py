@@ -18,10 +18,6 @@ from IA_player import *
 from aruco import *
 from mouse_interaction import *
 
-lock = None
-condition = None
-lock_img = None
-condition_img = None
 
 playerW = None
 playerB = None
@@ -121,11 +117,7 @@ def loading(args):
 
 def render(args):
     img = args[0]
-    glta.count = glta.count + 1
-    # print("[DRAW]: Frame", glta.count)
-    if lock_img.locked() == True:
-        lock_img.release()
-    # print("[DRAW]: Svegliato")
+    glta.queue_img.put(cv2.cvtColor(img,cv2.COLOR_RGB2BGR))
 
     glta.current = glta._chessboard.getPieces()
 
@@ -187,6 +179,9 @@ def render(args):
 
     glPopMatrix()
 
+    if _chessboard.isEnded():
+        config.state="EXIT"
+    
     glta.previous = glta.current
 
 def loadBackground(img):

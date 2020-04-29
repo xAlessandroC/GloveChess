@@ -30,7 +30,7 @@ def translate(vertices, x = 0, y = 0, z = 0):
 
 
 def translateVertices(id_list, obj, x=0, y=0, z=0):
-    print("TRANSLATION: ",x,y,z)
+    # print("TRANSLATION: ",x,y,z)
 
     new_vertices = translate(obj.vertices, x, y, z)
 

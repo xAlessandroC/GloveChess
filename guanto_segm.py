@@ -79,12 +79,38 @@ def getAllFingerTop(defects, selected_cnt):
 
     return fingers
 
+def giveCenter(fingers, bounding_r):
+    k = -1
+    ar = None
+    if bounding_r[2]>= bounding_r[3]:
+        k = 0
+        ar = bounding_r[3]/bounding_r[2]
+    else:
+        k = 1
+        ar = bounding_r[2]/bounding_r[3]
+
+    center = [int(bounding_r[0]+bounding_r[2]/2), int(bounding_r[1]+bounding_r[3]/2)]
+    max = 0
+    min = 0
+    for i in range(len(fingers)):
+        if fingers[i][k] > center[k]:
+            max = max + 1
+        else:
+            min = min + 1
+
+    if max >= min:
+        center[k] = center[k] + getReduction(bounding_r[2]/bounding_r[3])
+    else:
+        center[k] = center[k] - getReduction(bounding_r[2]/bounding_r[3])
+
+    return (center[0], center[1])
 def fingerFilter(contoured_frame, fingers, contour, hull):
 
     # Calcolo il rettangolo contenente il contour e trovo il centro della mano in maniera
     # proporzionale all'altezza del rettangolo
     bounding_r = cv2.boundingRect(contour)
-    center = (int(bounding_r[0]+bounding_r[2]/2), int(bounding_r[1]+bounding_r[3]/2))
+    center = giveCenter(fingers, bounding_r)
+    # center = (int(bounding_r[0]+bounding_r[2]/2), int(bounding_r[1]+bounding_r[3]/2))
     cv2.rectangle(contoured_frame, (int(bounding_r[0]), int(bounding_r[1])), (int(bounding_r[0]+bounding_r[2]), int(bounding_r[1]+bounding_r[3])), (255,0,0), 2)
     cv2.circle(contoured_frame, center, 8, [211, 84, 0], -1)
 

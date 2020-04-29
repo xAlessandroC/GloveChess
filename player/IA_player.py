@@ -24,7 +24,7 @@ class IAPlayer(Player):
         move = minmax(_chessboard, 3, self.name)
 
         # Effettua la mossa
-        # print("MOVE", move.getFrom(), move.getTo())
+        print("MOVE", move.getFrom(), move.getTo())
         if move != None:
             checkAndExecuteMove(move.getFrom(), move.getTo())
 

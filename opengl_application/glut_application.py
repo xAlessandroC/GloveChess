@@ -55,6 +55,7 @@ m_old = np.zeros((4,4))
 
 queue_A = Queue()
 queue_B = Queue()
+queue_img = Queue()
 ###############################
 
 ###############################

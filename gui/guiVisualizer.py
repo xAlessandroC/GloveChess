@@ -2,7 +2,7 @@ import pygame
 from pygame.locals import *
 import numpy as np
 import sys
-sys.path.append('../model/')
+sys.path.append('./model/')
 
 import os
 os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (70,40)
@@ -10,33 +10,30 @@ os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (70,40)
 from chessboard import *
 from executer import *
 
-width = 1100
-height = 640
+width = 250
+height = 250
 model = None
 
 mode = "debug"
 
 ## LOAD PIECES
-square = pygame.image.load("../resources/gui/greensquare.png")
-square = pygame.transform.scale(square,(50,50))
-button = pygame.image.load("../resources/gui/button.png")
-button = pygame.transform.scale(button,(40,40))
-board = pygame.image.load("../resources/gui/board.png")
+board = pygame.image.load("./resources/gui/board.png")
+board = pygame.transform.scale(board, (width, height))
 
 pieces_group = pygame.sprite.Group()
-w_pawn = pygame.sprite.Sprite(pieces_group);    w_pawn.image = pygame.image.load("../resources/gui/whitePawn.png")
-w_rook = pygame.sprite.Sprite(pieces_group);    w_rook.image = pygame.image.load("../resources/gui/whiteRook.png")
-w_knight = pygame.sprite.Sprite(pieces_group);  w_knight.image = pygame.image.load("../resources/gui/whiteKnight.png")
-w_bishop = pygame.sprite.Sprite(pieces_group);  w_bishop.image = pygame.image.load("../resources/gui/whiteBishop.png")
-w_queen = pygame.sprite.Sprite(pieces_group);   w_queen.image = pygame.image.load("../resources/gui/whiteQueen.png")
-w_king = pygame.sprite.Sprite(pieces_group);    w_king.image = pygame.image.load("../resources/gui/whiteKing.png")
+w_pawn = pygame.sprite.Sprite(pieces_group);    w_pawn.image = pygame.transform.scale(pygame.image.load("./resources/gui/whitePawn.png"),(int(width/8), int(height/8)))
+w_rook = pygame.sprite.Sprite(pieces_group);    w_rook.image = pygame.transform.scale(pygame.image.load("./resources/gui/whiteRook.png"),(int(width/8), int(height/8)))
+w_knight = pygame.sprite.Sprite(pieces_group);  w_knight.image = pygame.transform.scale(pygame.image.load("./resources/gui/whiteKnight.png"),(int(width/8), int(height/8)))
+w_bishop = pygame.sprite.Sprite(pieces_group);  w_bishop.image = pygame.transform.scale(pygame.image.load("./resources/gui/whiteBishop.png"),(int(width/8), int(height/8)))
+w_queen = pygame.sprite.Sprite(pieces_group);   w_queen.image = pygame.transform.scale(pygame.image.load("./resources/gui/whiteQueen.png"),(int(width/8), int(height/8)))
+w_king = pygame.sprite.Sprite(pieces_group);    w_king.image = pygame.transform.scale(pygame.image.load("./resources/gui/whiteKing.png"),(int(width/8), int(height/8)))
 
-b_pawn = pygame.sprite.Sprite(pieces_group);    b_pawn.image = pygame.image.load("../resources/gui/blackPawn.png")
-b_rook = pygame.sprite.Sprite(pieces_group);    b_rook.image = pygame.image.load("../resources/gui/blackRook.png")
-b_knight = pygame.sprite.Sprite(pieces_group);  b_knight.image = pygame.image.load("../resources/gui/blackKnight.png")
-b_bishop = pygame.sprite.Sprite(pieces_group);  b_bishop.image = pygame.image.load("../resources/gui/blackBishop.png")
-b_queen = pygame.sprite.Sprite(pieces_group);   b_queen.image = pygame.image.load("../resources/gui/blackQueen.png")
-b_king = pygame.sprite.Sprite(pieces_group);    b_king.image = pygame.image.load("../resources/gui/blackKing.png")
+b_pawn = pygame.sprite.Sprite(pieces_group);    b_pawn.image = pygame.transform.scale(pygame.image.load("./resources/gui/blackPawn.png"),(int(width/8), int(height/8)))
+b_rook = pygame.sprite.Sprite(pieces_group);    b_rook.image = pygame.transform.scale(pygame.image.load("./resources/gui/blackRook.png"),(int(width/8), int(height/8)))
+b_knight = pygame.sprite.Sprite(pieces_group);  b_knight.image = pygame.transform.scale(pygame.image.load("./resources/gui/blackKnight.png"),(int(width/8), int(height/8)))
+b_bishop = pygame.sprite.Sprite(pieces_group);  b_bishop.image = pygame.transform.scale(pygame.image.load("./resources/gui/blackBishop.png"),(int(width/8), int(height/8)))
+b_queen = pygame.sprite.Sprite(pieces_group);   b_queen.image = pygame.transform.scale(pygame.image.load("./resources/gui/blackQueen.png"),(int(width/8), int(height/8)))
+b_king = pygame.sprite.Sprite(pieces_group);    b_king.image = pygame.transform.scale(pygame.image.load("./resources/gui/blackKing.png"),(int(width/8), int(height/8)))
 
 pieces = [w_pawn,w_rook,w_knight,w_bishop,w_queen,w_king,
           b_pawn,b_rook,b_knight,b_bishop,b_queen,b_king]
@@ -58,8 +55,8 @@ PIECES = {
 
 
 centers = []
-start = (10,10)
-length = 80
+start = (int(width*0.008),int(height*0.008))
+length = 31
 count = 0
 for i in range(8):
     for j in range(8):
@@ -79,8 +76,8 @@ def draw_text(text, font, color, surface, x, y):
     surface.blit(textobj, textrect)
 
 def clickedCell(mouse_pos):
-    i = int(mouse_pos[0]/80)
-    j = int(mouse_pos[1]/80)
+    i = int(mouse_pos[0]/31)
+    j = int(mouse_pos[1]/31)
 
     return i,j
 
@@ -101,18 +98,18 @@ def detectCollidedSprite(mouse_pos):
     return None, -1, -1
 
 def startGui():
-    global model
-    
+    global model, board
+
     pygame.init()
     size = (width, height)
     screen = pygame.display.set_mode(size)
-    icon = pygame.image.load("../resources/gui/chess.png")
+    icon = pygame.image.load("./resources/gui/chess.png")
     pygame.display.set_caption("AR Chess")
     pygame.display.set_icon(icon)
 
     ## BACKGROUND
     background = board
-    circle = pygame.image.load("../resources/gui/circle.png")
+    circle = pygame.image.load("./resources/gui/circle.png")
     circle = pygame.transform.scale(circle,(10,10))
 
     ## DRAWINGS SETTINGS
@@ -127,12 +124,8 @@ def startGui():
     cell_x = -1
     cell_y = -1
 
-
     while carryOn:
         mouse_pos = pygame.mouse.get_pos()
-
-        draw_text('AR CHESS', font_title, (255, 0, 0), screen, 770, 10)
-        draw_text('Mode: '+mode, font_mode, (255, 255, 255), screen, 950, 600)
 
         screen.blit(background,(0,0))
         model = chessboard.getPieces()
@@ -145,7 +138,7 @@ def startGui():
                         screen.blit(PIECES[model[i,j].name.lower()].image,centers[i,j])
 
         if pressed and pressed_sprite != None:
-            screen.blit(pressed_sprite,(mouse_pos[0]-25,mouse_pos[1]-25))
+            screen.blit(pressed_sprite,(mouse_pos[0]-15,mouse_pos[1]-15))
 
 
         for event in pygame.event.get():
