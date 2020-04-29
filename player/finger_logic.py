@@ -73,9 +73,9 @@ def giveMeCorrectFinger(fingers, bounding_r):
             min = min + 1
 
     temp = None
-    print(np.array(fingers).shape)
-    print(np.array(fingers))
-    print(np.array(fingers)[:,k])
+    # print(np.array(fingers).shape)
+    # print(np.array(fingers))
+    # print(np.array(fingers)[:,k])
 
     if max > min : temp = np.array(fingers)[:,k].max()
     else:  temp = np.array(fingers)[:,k].min()

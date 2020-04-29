@@ -20,11 +20,14 @@ def findFingers(frame, contour, hull):
     hull_idx = cv2.convexHull(contour, returnPoints = False)
     defects = cv2.convexityDefects(contour, hull_idx)
 
-    fingers_top = getAllFingerTop(defects, contour)
+    if (defects is None) == False:
+        fingers_top = getAllFingerTop(defects, contour)
 
-    filtered_fingers, bounding_r = fingerFilter(frame, fingers_top, contour, hull)
+        filtered_fingers, bounding_r = fingerFilter(frame, fingers_top, contour, hull)
 
-    return filtered_fingers, bounding_r
+        return filtered_fingers, bounding_r
+    else:
+        return ([],[])
 
 def fingerFilter(contoured_frame, fingers, contour, hull):
 
@@ -81,14 +84,9 @@ def getAllFingerTop(defects, selected_cnt):
     return fingers
 
 ##################### MAIN FUNCTION ########################
-p = 0
 def finger_detection(frame):
     global p
     frame_HSV = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-
-    if p == 0:
-        print("THRESHOLD", config.low_th, config.high_th)
-        p = 1
     frame_threshold = cv2.inRange(frame_HSV, (config.low_th[0],config.low_th[1],config.low_th[2]), (config.high_th[0],config.high_th[1],config.high_th[2]))
     # frame_result = segmentation(frame, frame_threshold)
 

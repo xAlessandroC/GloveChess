@@ -184,6 +184,7 @@ if __name__ == "__main__":
     while True:
         frame = webcam.getNextFrame()
         frame = cv2.GaussianBlur(frame, (11,11), 0)
+        cv2.circle(frame, (10,10), 10, [255, 0, 0], -1);
 
         if frame is None:
             break

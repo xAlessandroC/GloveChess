@@ -140,8 +140,8 @@ def init_application():
     init_gl()
 
 def init_glContext():
-    # glutInitWindowPosition(0, 0);
-    # glutInitWindowSize(windowWidth, windowHeight);
+    glutInitWindowPosition(370, 150);
+    glutInitWindowSize(windowWidth, windowHeight);
     glutInit(sys.argv)
 
     glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_GLUTMAINLOOP_RETURNS);
@@ -151,7 +151,7 @@ def init_glContext():
     glutKeyboardFunc(keyboard)
     glutIdleFunc(draw)
 
-    glutFullScreen()
+    # glutFullScreen()
 
 def start_application():
     glutMainLoop()

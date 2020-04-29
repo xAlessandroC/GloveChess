@@ -30,10 +30,10 @@ def checkAndExecuteMove(fromCell, toCell):
 
     possibleMoves = instance.generateMoves(fromCell)
     res = False
-    print("MOVES:", possibleMoves)
+    # print("MOVES:", possibleMoves)
     for move in possibleMoves:
         t = from_matrix_to_chessboard(move)
-        print("MOVE: ",t)
+        # print("MOVE: ",t)
         if t == toCell:
             print("CORRETTA:",t)
             res = True

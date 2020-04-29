@@ -17,7 +17,6 @@ class BishopGenerator(Generator):
 
         fromCell_matrix = from_chessboard_to_matrix(fromCell)
 
-        print("Movimento in diagonale")
         climb_1 = False
         climb_2 = False
         climb_3 = False
