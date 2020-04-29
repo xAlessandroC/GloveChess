@@ -107,6 +107,8 @@ def finger_detection(frame):
         hull = cv2.convexHull(selected_cnt)
 
         fingers_t, bounding_r = findFingers(contoured_frame, selected_cnt, hull)
+        
+        cv2.imshow("Glove window",contoured_frame)
         return fingers_t, bounding_r
     else:
         return ([],[])
