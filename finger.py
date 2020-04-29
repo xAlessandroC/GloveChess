@@ -25,6 +25,9 @@ def findFingers(frame, contour, hull):
 
         filtered_fingers, bounding_r = fingerFilter(frame, fingers_top, contour, hull)
 
+        for finger in filtered_fingers:
+            cv2.circle(frame, finger, 8, [255, 0, 0], -1);
+
         return filtered_fingers, bounding_r
     else:
         return ([],[])
@@ -46,6 +49,7 @@ def fingerFilter(contoured_frame, fingers, contour, hull):
         if np.linalg.norm(np.array(fingers[i]) - np.array(center)) < 230:
             final_fingers.append(fingers[i])
 
+    cv2.circle(contoured_frame, center, 230, [222, 111, 77], 3)
     return final_fingers, bounding_r
 
 def getAllFingerTop(defects, selected_cnt):
@@ -107,7 +111,7 @@ def finger_detection(frame):
         hull = cv2.convexHull(selected_cnt)
 
         fingers_t, bounding_r = findFingers(contoured_frame, selected_cnt, hull)
-        
+
         cv2.imshow("Glove window",contoured_frame)
         return fingers_t, bounding_r
     else:
