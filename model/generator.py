@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
-class Checker(ABC):
+class Generator(ABC):
 
     @abstractmethod
-    def checkMove(self, fromCell, toCell):
+    def generateMoves(self, fromCell):
         pass
