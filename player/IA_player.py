@@ -1,3 +1,8 @@
+import sys
+sys.path.append('../model/')
+sys.path.append('../player/')
+sys.path.append('../IA/')
+
 from player import *
 from chessboard import *
 from executer import *
@@ -19,5 +24,14 @@ class IAPlayer(Player):
         move = minmax(_chessboard, 3, self.name)
 
         # Effettua la mossa
-        print(move)
-        checkAndExecuteMove(move.getFrom(), move.getTo())
+        print("MOVE", move.getFrom(), move.getTo())
+        if move != None:
+            checkAndExecuteMove(move.getFrom(), move.getTo())
+
+
+# if __name__ == '__main__':
+#     c = Chessboard.getInstance()
+#     c.increment_turn()
+#     player = IAPlayer("BLACK")
+#
+#     move = player.doMove()

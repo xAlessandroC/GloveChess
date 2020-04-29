@@ -8,10 +8,10 @@ class Action():
         self.__from = from_
 
     def getFrom(self):
-        return this.__from
+        return self.__from
 
     def setTo(self, to_):
         self.__to = to
 
     def getTo(self):
-        return this.__to
+        return self.__to
