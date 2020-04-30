@@ -23,24 +23,12 @@ class Thread_P(Thread):
             print("Giocatore",self.typeOfPlayer.name,": nuovo ciclo")
 
             #SCEGLIE MOSSA
-            main.condition.acquire()
-            currentTurn = Turn(_chessboard.get_turn()[1]).name
+            event = _chessboard.getPlayerEvent(self.typeOfPlayer.name)
+            event.wait()
+            event.clear()
+            print("Giocatore",self.typeOfPlayer.name,": mio turno")
 
-            if self.stop == True:
-                return
-
-            if _chessboard.isEnded() == True:
-                main.condition.release()
-
-            elif currentTurn == self.typeOfPlayer.name:
-                self.typeOfPlayer.doMove()
-
-                main.condition.notifyAll()
-                main.condition.release()
-
-            else:
-                print("Giocatore",self.typeOfPlayer.name,": mi sospendo")
-                main.condition.wait()
+            self.typeOfPlayer.doMove()
 
         print("Il vincitore è:", _chessboard.getWinner())
 

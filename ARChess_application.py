@@ -9,7 +9,7 @@ sys.path.append('./gui/')
 
 import config as config
 import threading
-from guiVisualizer import *
+# from guiVisualizer import *
 from calibration import *
 from glut_application import *
 from pieces_data import *

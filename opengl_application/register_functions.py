@@ -96,9 +96,6 @@ def loading(args):
     glta._chessboard = Chessboard.getInstance()
     glta.current = glta._chessboard.getPieces()
 
-    lock = threading.Lock()
-    condition = threading.Condition(lock)
-
     lock_img = threading.Lock()
     # condition_img = threading.Condition(lock_img)
 
@@ -109,9 +106,6 @@ def loading(args):
     playerB = Thread_P(ia)
     playerW.start()
     playerB.start()
-
-    # cnt = Thread_A()
-    # cnt.start()
 
     config.state="PLAYING"
 
@@ -179,9 +173,9 @@ def render(args):
 
     glPopMatrix()
 
-    if _chessboard.isEnded():
+    if glta._chessboard.isEnded():
         config.state="EXIT"
-    
+
     glta.previous = glta.current
 
 def loadBackground(img):
