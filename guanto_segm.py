@@ -20,8 +20,8 @@ offset_S = 70
 def getReduction(ar):
     armax = 0.70
     armin = 0.30
-    vmax = 100
-    vmin = 0
+    vmax = 200
+    vmin = 70
 
     x = ar
     if ar>armax:    x=armax
@@ -32,7 +32,7 @@ def getReduction(ar):
 
     reduction = x*r1 - r2 + vmax
     reduction = int(reduction)
-    print("AR:",ar,"Reduction for",x,"=",reduction)
+    # print("AR:",ar,"Reduction for",x,"=",reduction)
     return reduction
 
 def segmentation(frame, frame_threshold):
@@ -47,6 +47,7 @@ def segmentation(frame, frame_threshold):
 def getAllFingerTop(defects, selected_cnt):
     fingers = []
     temp = []
+    _far = []
 
     # Aggiungo le coppie (start, end) di tutti i punti di convessità che hanno un angolo minore di 90°
     for i in range(len(defects)):
@@ -62,6 +63,8 @@ def getAllFingerTop(defects, selected_cnt):
 
         if angle <= math.pi / 2:
             temp.append([start,end])
+            _far.append(far)
+            cv2.circle(contoured_frame, far, 8, [211, 255, 133], -1)
 
     # Da tutte le coppie (start, end) isolo quelle con valori molto diversi
     for i in range(len(temp)):
@@ -77,9 +80,9 @@ def getAllFingerTop(defects, selected_cnt):
             fingers.append(temp[i][0])
             fingers.append(temp[next_idx][1])
 
-    return fingers
+    return fingers, _far
 
-def giveCenter(fingers, bounding_r):
+def giveCenter(fingers, bounding_r, _far):
     k = -1
     ar = None
     if bounding_r[2]>= bounding_r[3]:
@@ -92,34 +95,47 @@ def giveCenter(fingers, bounding_r):
     center = [int(bounding_r[0]+bounding_r[2]/2), int(bounding_r[1]+bounding_r[3]/2)]
     max = 0
     min = 0
-    for i in range(len(fingers)):
-        if fingers[i][k] > center[k]:
+    for i in range(len(_far)):
+        if _far[i][k] > center[k]:
             max = max + 1
         else:
             min = min + 1
 
     if max >= min:
-        center[k] = center[k] + getReduction(bounding_r[2]/bounding_r[3])
+        center[k] = center[k] + getReduction(ar)
     else:
-        center[k] = center[k] - getReduction(bounding_r[2]/bounding_r[3])
+        center[k] = center[k] - getReduction(ar)
+
+    point = (bounding_r[0]+(bounding_r[2]*), bounding_r[1]+(bounding_r[3]*))
 
     return (center[0], center[1])
-def fingerFilter(contoured_frame, fingers, contour, hull):
+
+def fingerFilter(contoured_frame, fingers, contour, hull, _far):
 
     # Calcolo il rettangolo contenente il contour e trovo il centro della mano in maniera
     # proporzionale all'altezza del rettangolo
+    k = -1
+    rect = cv2.minAreaRect(contour)
+    print("ANGLE:", rect[2])
+    box = cv2.boxPoints(rect)
+    box = np.int0(box)
     bounding_r = cv2.boundingRect(contour)
-    center = giveCenter(fingers, bounding_r)
+    center = giveCenter(fingers, bounding_r, _far)
+    if bounding_r[2]>= bounding_r[3]:
+        k = 0
+    else:
+        k = 1
     # center = (int(bounding_r[0]+bounding_r[2]/2), int(bounding_r[1]+bounding_r[3]/2))
+    # cv2.drawContours(contoured_frame,[box],0,(0,0,255),2)
     cv2.rectangle(contoured_frame, (int(bounding_r[0]), int(bounding_r[1])), (int(bounding_r[0]+bounding_r[2]), int(bounding_r[1]+bounding_r[3])), (255,0,0), 2)
     cv2.circle(contoured_frame, center, 8, [211, 84, 0], -1)
 
     final_fingers = []
     for i in range(len(fingers)):
         # print("DISTANCE",np.linalg.norm(np.array(fingers[i])-np.array([bounding_r[0]+bounding_r[2]/2, bounding_r[1]+bounding_r[3]/2])))
-        if np.linalg.norm(np.array(fingers[i])-np.array(center))<=230:
+        if np.linalg.norm(np.array(fingers[i])-np.array(center))<=(center[k] - bounding_r[k]+20):
             final_fingers.append(fingers[i])
-    cv2.circle(contoured_frame, center, 230, [222, 111, 77], 3)
+    cv2.circle(contoured_frame, center, (center[1] - bounding_r[1]+20), [222, 111, 77], 3)
 
     return (final_fingers, bounding_r)
 
@@ -128,9 +144,9 @@ def findFingers(frame, contour, hull):
     hull_idx = cv2.convexHull(contour, returnPoints=False)
     defects = cv2.convexityDefects(contour, hull_idx)
 
-    fingers_top = getAllFingerTop(defects, contour)
+    fingers_top, _far = getAllFingerTop(defects, contour)
 
-    filtered_fingers, bounding_r = fingerFilter(frame, fingers_top, contour, hull)
+    filtered_fingers, bounding_r = fingerFilter(frame, fingers_top, contour, hull, _far)
 
     return filtered_fingers, bounding_r
 
@@ -160,7 +176,7 @@ def start_segmentation(img):
     if high_th[1] > 255:
         high_th[1 ] = 255
 
-    print("THRESHOLDS FOUND:", low_th, high_th)
+    # print("THRESHOLDS FOUND:", low_th, high_th)
 
     return tuple(low_th), tuple(high_th)
 
@@ -181,9 +197,9 @@ def giveMeCorrectFinger(fingers, bounding_r):
             min = min + 1
 
     temp = None
-    print(np.array(fingers).shape)
-    print(np.array(fingers))
-    print(np.array(fingers)[:,k])
+    # print(np.array(fingers).shape)
+    # print(np.array(fingers))
+    # print(np.array(fingers)[:,k])
 
     if max > min : temp = np.array(fingers)[:,k].max()
     else:  temp = np.array(fingers)[:,k].min()

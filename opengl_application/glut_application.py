@@ -88,12 +88,12 @@ def draw():
     img = webcam.getNextFrame()
 
     # Mostro il frame "puro" prima di utilizzarlo per le varie operazioni
-    cv2.namedWindow("Debug window",cv2.WINDOW_NORMAL)
-    cv2.resizeWindow("Debug window", 356,200)
+    # cv2.namedWindow("Debug window",cv2.WINDOW_NORMAL)
+    # cv2.resizeWindow("Debug window", 356,200)
     cv2.namedWindow("Glove window",cv2.WINDOW_NORMAL)
     cv2.resizeWindow("Glove window", 356,200)
-    cv2.moveWindow("Glove window", 0,200);
-    cv2.imshow("Debug window",img)
+    # cv2.moveWindow("Glove window", 0,200);
+    # cv2.imshow("Debug window",img)
     img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
 
     register[config.state]([img])

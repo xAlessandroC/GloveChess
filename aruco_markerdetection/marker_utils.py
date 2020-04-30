@@ -21,7 +21,7 @@ def getCorrectVectors(rvec, tvec):
 def isSimilar(vec, old_vec):
     similar_cnt = 0
     dissimilar_cnt = 0
-    threshold = 0.05
+    threshold = 0.07
 
     if len(old_vec[0]) == 0 and len(old_vec[1]) == 0:
         return False

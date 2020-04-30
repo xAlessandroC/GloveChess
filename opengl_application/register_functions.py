@@ -2,7 +2,6 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
 import threading
-import guanto_segm
 import config as config
 import pieces_data as pieces_data
 import glut_application as glta
@@ -17,6 +16,7 @@ from human_player import *
 from IA_player import *
 from aruco import *
 from mouse_interaction import *
+from model_utils import *
 
 
 playerW = None
@@ -99,6 +99,11 @@ def loading(args):
     lock_img = threading.Lock()
     # condition_img = threading.Condition(lock_img)
 
+    cv2.namedWindow("Chess debug window",cv2.WINDOW_NORMAL)
+    cv2.resizeWindow("Chess debug window", 350,350)
+    cv2.moveWindow("Chess debug window", 0,400);
+    cv2.imshow("Chess debug window", glta._chessboard.toPrint())
+
 
     human = HumanPlayer("WHITE")
     ia = IAPlayer("BLACK")
@@ -114,6 +119,7 @@ def render(args):
     glta.queue_img.put(cv2.cvtColor(img,cv2.COLOR_RGB2BGR))
 
     glta.current = glta._chessboard.getPieces()
+    cv2.imshow("Chess debug window", glta._chessboard.toPrint())
 
     updateChessboard(glta.current, glta.previous)
     updateSelector()

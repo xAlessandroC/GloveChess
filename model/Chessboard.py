@@ -1,6 +1,8 @@
 import numpy as np
+import cv2
 from model_utils import *
 from piece import Piece
+from PIL import Image
 from threading import *
 
 class Chessboard:
@@ -94,3 +96,23 @@ class Chessboard:
             return self.__event_white
         if type == "BLACK":
             return self.__event_black
+
+    def toPrint(self):
+        converted_board = board.convert("RGB")
+        cell_size = int(board.size[0]/8)
+
+        pieces = self.getPieces()
+        pieces = np.flip(pieces,1)
+        for i in range(8):
+            for j in range(8):
+                if pieces[i,j] != Piece.EMPTY:
+                    img = PIECES[pieces[i,j].name.lower()]
+                    size = img.size
+                    cell = (int(cell_size/2+i*cell_size-size[0]/2), int(cell_size/2+j*cell_size-size[1]/2))
+                    converted_board.paste(img, (cell[0],cell[1]), img)
+
+        open_cv_image = np.array(converted_board)
+        open_cv_image = open_cv_image[:, :, ::-1].copy()
+        # open_cv_image = cv2.resize(open_cv_image, (300, 300))
+
+        return open_cv_image

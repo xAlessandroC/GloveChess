@@ -1,7 +1,6 @@
 import numpy as np
 import cv2
 from cv2 import aruco
-from utils.rendering import *
 from marker_utils import *
 
 aruco_dict = aruco.Dictionary_get(aruco.DICT_6X6_250)

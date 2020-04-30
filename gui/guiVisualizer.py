@@ -100,18 +100,18 @@ def startGui():
 
     event = chessboard.getUpdateEvent()
     print("pygame preso evento")
-    while chessboard.isEnded() != True:
-        event.wait()
-        event.clear()
+    # while chessboard.isEnded() != True:
+    #     event.wait()
+    #     event.clear()
+    #
+    #     print("pygame update chessboard")
+    #     loadPieces(screen)
+    #     print("pygame aggiornato")
+    #
+    #     pygame.display.flip()
 
-        print("pygame update chessboard")
-        loadPieces(screen)
-        print("pygame aggiornato")
 
-        pygame.display.flip()
-
-
-    pygame.quit()
+    # pygame.quit()
 
 if __name__ == "__main__":
     startGui()
