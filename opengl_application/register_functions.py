@@ -1,41 +1,39 @@
+"""
+    This module contains the registry functions used in OpenGL draw cycle
+    * idle: function executed until the threshold detection
+    * colorDetection: threshold detection on the current frame
+    * loading: code for initializing game and launching players
+    * render: code executed during main draw cycle, shows both frame and chessboard
+    * systemExit: termination of the application
+
+    * loadBackground: loads background webcam frame in OpenGL window
+"""
+
+import threading
+import settings as config
+import glut_application as glta
+import pieces_init as pieces_data
+
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
-import threading
-import config as config
-import pieces_data as pieces_data
-import glut_application as glta
-
 from threading import Thread
-from pieces_data import *
-from calibration import *
-from findCenters import *
-from thread_p import *
-from contatore import *
-from human_player import *
-from IA_player import *
 from aruco import *
-from mouse_interaction import *
+from thread_p import *
+from IA_player import *
+from pieces_init import *
+from calibration import *
+from find_centers import *
 from model_utils import *
+from human_player import *
+from selector_utils import *
 
 
 playerW = None
 playerB = None
-cnt = None
-
-coords = []
-
-def idle(args):
-    img = args[0]
-
-    start_point = (700, 300)
-    end_point = (850, 450)
-
-    cv2.rectangle(img, start_point, end_point, (0,255,0), 2)
-
-    loadBackground(img)
 
 def systemExit(args):
+
     for key in pieces_data.PIECES_POSITION.keys():
         glDeleteLists(pieces_data.PIECES_POSITION[key], 1)
 
@@ -47,21 +45,32 @@ def systemExit(args):
     glutLeaveMainLoop()
 
 
+def idle(args):
+
+    img = args[0]
+
+    start_point = (int(img.shape[1]/2), int(img.shape[0]/2))
+    end_point = (int(img.shape[1]/2 + 150), int(img.shape[0]/2 + 150))
+
+    cv2.rectangle(img, start_point, end_point, (0,255,0), 2)
+
+    loadBackground(img)
+
+
 def colorDetection(args):
+
     img = args[0]
     img = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
 
     offset_H = 10
     offset_S = 70
 
-    start_point = (700, 300)
-    end_point = (850, 450)
+    start_point = (int(img.shape[1]/2), int(img.shape[0]/2))
+    end_point = (int(img.shape[1]/2 + 150), int(img.shape[0]/2 + 150))
 
     sub_image = img[start_point[1]:end_point[1], start_point[0]:end_point[0], :]
     mean = np.mean(sub_image, axis = (0,1))
 
-    print(offset_S, offset_H)
-    print(mean)
     low_th = [mean[0]-offset_H, mean[1]-offset_S, 20]
     high_th = [mean[0]+offset_H, mean[1]+offset_S, 255]
 
@@ -88,22 +97,19 @@ def colorDetection(args):
     config.low_th = low_th
     config.high_th = high_th
 
-    config.state="LOADING"
+    glta.state="LOADING"
+
 
 def loading(args):
-    global lock, condition, lock_img, condition_img, playerW, playerB, cnt
+    global playerW, playerB
 
-    glta._chessboard = Chessboard.getInstance()
-    glta.current = glta._chessboard.getPieces()
-
-    lock_img = threading.Lock()
-    # condition_img = threading.Condition(lock_img)
+    _chessboard = Chessboard.getInstance()
+    glta.current = _chessboard.getPieces()
 
     cv2.namedWindow("Chess debug window",cv2.WINDOW_NORMAL)
     cv2.resizeWindow("Chess debug window", 350,350)
-    cv2.moveWindow("Chess debug window", 0,400);
-    cv2.imshow("Chess debug window", glta._chessboard.toPrint())
-
+    cv2.moveWindow("Chess debug window", 0,300);
+    cv2.imshow("Chess debug window", _chessboard.toPrint())
 
     human = HumanPlayer("WHITE")
     ia = IAPlayer("BLACK")
@@ -112,31 +118,32 @@ def loading(args):
     playerW.start()
     playerB.start()
 
-    config.state="PLAYING"
+    glta.state="PLAYING"
+
 
 def render(args):
-    img = args[0]
-    glta.queue_img.put(cv2.cvtColor(img,cv2.COLOR_RGB2BGR))
 
-    glta.current = glta._chessboard.getPieces()
-    cv2.imshow("Chess debug window", glta._chessboard.toPrint())
+    img = args[0]
+    config.queue_img.put(cv2.cvtColor(img,cv2.COLOR_RGB2BGR))
+
+    _chessboard = Chessboard.getInstance()
+    glta.current = _chessboard.getPieces()
+    cv2.imshow("Chess debug window", _chessboard.toPrint())
 
     updateChessboard(glta.current, glta.previous)
     updateSelector()
     rvec, tvec, img = detect(img, config.camera_matrix, config.dist_coefs)
-    # print("RVEC:", rvec.shape, rvec)
-    # print("TVEC:", tvec.shape, tvec)
     h, w = img.shape[:2]
 
     loadBackground(img)
 
-    ## Enable / Disable
+    # Enable / Disable
     glEnable(GL_DEPTH_TEST)     # Enable GL_DEPTH_TEST
     glEnable(GL_LIGHTING)       # Enable Light
     glEnable(GL_LIGHT0)         # Enable Light
     glDisable(GL_TEXTURE_2D)    # Disable texture map
 
-    ## make projection matrix
+    # Make projection matrix
     m1 = np.array([
     [(glta.alpha)/glta.cx, 0, 0, 0],
     [0, glta.beta/glta.cy, 0, 0],
@@ -145,7 +152,6 @@ def render(args):
     ])
     glLoadMatrixd(m1.T)
 
-    ## draw cube
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
     glPushMatrix()
@@ -154,7 +160,7 @@ def render(args):
     lightfv = ctypes.c_float * 4
     glLightfv(GL_LIGHT0, GL_POSITION, lightfv(-1.0, 1.0, 1.0, 0.0))
     if len(rvec[0]) != 0 and len(tvec[0]) != 0:
-        # fix axis
+        # Fix axis
         tvec[0][0][0] = tvec[0][0][0]
         tvec[0][0][1] = -tvec[0][0][1]
         tvec[0][0][2] = -tvec[0][0][2]
@@ -179,30 +185,32 @@ def render(args):
 
     glPopMatrix()
 
-    if glta._chessboard.isEnded():
-        config.state="EXIT"
+    if _chessboard.isEnded():
+        glta.state="EXIT"
 
     glta.previous = glta.current
 
+
 def loadBackground(img):
+
     h, w = img.shape[:2]
 
     glBindTexture(GL_TEXTURE_2D, glta.texture_background)
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, img)
 
-    ## Enable / Disable
+    # Enable / Disable
     glDisable(GL_DEPTH_TEST)    # Disable GL_DEPTH_TEST
     glDisable(GL_LIGHTING)      # Disable Light
     glDisable(GL_LIGHT0)        # Disable Light
     glEnable(GL_TEXTURE_2D)     # Enable texture map
 
-    ## init
+    # Init
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)  # Clear Buffer
     glColor3f(1.0, 1.0, 1.0)    # Set texture Color(RGB: 0.0 ~ 1.0)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
 
-    ## draw background
+    # Draw background
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity()
     glBindTexture(GL_TEXTURE_2D, glta.texture_background)

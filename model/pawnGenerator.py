@@ -1,7 +1,13 @@
+"""
+    Implements the pawn rules and generates all possible moves from a starting position
+"""
+
+import math
+
 from chessboard import *
+from chess_enum import *
 from model_utils import *
 from generator import *
-import math
 
 class PawnGenerator(Generator):
 
@@ -9,7 +15,6 @@ class PawnGenerator(Generator):
     __W_startPosition = ["a2","b2","c2","d2","e2","f2","g2","h2"]
 
     def generateMoves(self, fromCell):
-        print("### PAWN GENERATOR ###")
 
         moves = []
         chessboard = Chessboard.getInstance()
@@ -31,7 +36,6 @@ class PawnGenerator(Generator):
                 limit = 2
 
         climb = False
-        print(direction)
         for i in range(1, limit+1):
             to_cell = (fromCell_matrix[0], fromCell_matrix[1] + (i*direction))
             if to_cell[0]>= 0 and to_cell[0]<8 and to_cell[1]>= 0 and to_cell[1]<8 and climb==False:

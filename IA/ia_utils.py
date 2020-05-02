@@ -1,6 +1,13 @@
+"""
+    This module defines some utility functions
+    *   getPossibleMoves: generates all possible moves starting from the current state and the type of player
+    *   nextState: return the resulting state after a possible move
+    *   heuristic: implement a very simple heuristic used by minmax
+"""
+
+from chess_enum import Piece
 from model_utils import *
 from action import *
-from piece import Piece
 
 def getPossibleMoves(node, role):
 
@@ -11,6 +18,7 @@ def getPossibleMoves(node, role):
         for j in range(8):
             if state[i][j].name.startswith(role[0]):
                 piece = state[i][j].name
+                # Use the generators of model
                 generatorName = piece[2:].lower() + "Generator"
                 module = __import__(generatorName)
                 class_ = getattr(module, generatorName[0].upper()+generatorName[1:])

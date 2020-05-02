@@ -1,9 +1,14 @@
+"""
+    Define the model of the chess game.
+"""
+
 import numpy as np
 import cv2
-from model_utils import *
-from piece import Piece
+
 from PIL import Image
 from threading import *
+from chess_enum import *
+from model_utils import *
 
 class Chessboard:
     __instance = None
@@ -71,7 +76,6 @@ class Chessboard:
 
         event = self.getUpdateEvent()
         event.set()
-        print("settato evento update")
 
     def getPieces(self):
         return np.copy(self.__pieces)

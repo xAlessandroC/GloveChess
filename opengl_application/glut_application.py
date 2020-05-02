@@ -1,102 +1,98 @@
+"""
+    OpenGL application.
+"""
+
 import cv2
-import numpy as np
-import ctypes
 import time
+import ctypes
 import random
-import pieces_data as pieces_data
-import config as config
+import numpy as np
+import settings as config
 import aruco as aruco_config
-from queue import *
+import pieces_init as pieces_data
 
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
+from queue import *
 from aruco import *
-from calibration import *
-from objloader_complete import *
 from webcam import *
-from opengl_utils import *
-from register_functions import *
-from findCenters import *
-from mouse_interaction import *
-from chessboard import *
 from executer import *
-from piece import *
+from chess_enum import *
+from chessboard import *
+from calibration import *
+from find_centers import *
+from opengl_utils import *
+from objloader_complete import *
+from register_functions import *
 
 
 #TODO: pushare risorse nuove
-###############################
-# GLOBAL VARIABLES
-texture_background = None
-chess_piece = None
-webcam = None
 
-windowWidth = 900
-windowHeight = 506
+# Global variables
+texture_background = None
 
 f = 1000.0
 n = 1.0
-
 alpha = None
 beta = None
 cx = None
 cy = None
 
-_chessboard = None
+obj_s = None
+
+webcam = None
 
 centers = []
 current = []
 previous = []
 
-count = 0
-
 current_mvm = None
-m_old = np.zeros((4,4))
 
-queue_A = Queue()
-queue_B = Queue()
-queue_img = Queue()
-###############################
+state = "IDLE"
 
-###############################
-## REGISTER
+
+# Register
 register = {
-"IDLE": idle,
-"DETECTION": colorDetection,
-"LOADING": loading,
-"PLAYING": render,
-"EXIT": systemExit
+    "IDLE": idle,
+    "DETECTION": colorDetection,
+    "LOADING": loading,
+    "PLAYING": render,
+    "EXIT": systemExit
 }
-##############################
+
 
 def keyboard(key, x, y):
+    global state
 
     bkey = key.decode("utf-8")
+
     if bkey == "q":
-        config.state="EXIT"
+        state="EXIT"
+
     elif bkey == "d":
-        config.state="DETECTION"
+        state="DETECTION"
+
     elif bkey == "o":
         if aruco_config.size_marker > 1:
             aruco_config.size_marker = aruco_config.size_marker - 0.5
+
     elif bkey == "l":
         if aruco_config.size_marker < 14:
             aruco_config.size_marker = aruco_config.size_marker + 0.5
 
+
 def draw():
-    global count
+
     img = webcam.getNextFrame()
 
-    # Mostro il frame "puro" prima di utilizzarlo per le varie operazioni
-    # cv2.namedWindow("Debug window",cv2.WINDOW_NORMAL)
-    # cv2.resizeWindow("Debug window", 356,200)
     cv2.namedWindow("Glove window",cv2.WINDOW_NORMAL)
     cv2.resizeWindow("Glove window", 356,200)
-    # cv2.moveWindow("Glove window", 0,200);
-    # cv2.imshow("Debug window",img)
+
     img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
 
-    register[config.state]([img])
+    # Apply the right function according to the current state
+    register[state]([img])
 
     glFlush();
     glutSwapBuffers()
@@ -104,9 +100,9 @@ def draw():
 ##############################
 
 ###############################
-# INIT
+# Init
 def init_param():
-    global camera_matrix, alpha, beta, cx, cy, _chessboard, centers, webcam
+    global alpha, beta, cx, cy, centers, webcam
 
     alpha = config.camera_matrix[0][0]
     beta = config.camera_matrix[1][1]
@@ -115,12 +111,11 @@ def init_param():
 
     webcam = Webcam(0)
 
-    _chessboard = Chessboard.getInstance()
-
     centers = findCenters()
     centers = centers.reshape(8,8,2)
     centers = np.flip(centers,1)
     centers = np.flip(centers,0)
+
 
 def init_gl():
     global texture_background
@@ -134,28 +129,32 @@ def init_gl():
 
     glEnable(GL_TEXTURE_2D)
     texture_background = glGenTextures(1)
-    print("SETTATA TEXTURE: ", texture_background)
+    print("Texture setting: ", texture_background)
+
 
 ###############################
-# APPLICATION
+# Application
+
 def init_application():
     init_param()
     init_piece(centers)
     init_gl()
 
+
 def init_glContext():
-    glutInitWindowPosition(370, 150);
-    glutInitWindowSize(windowWidth, windowHeight);
+    glutInitWindowPosition(config.init_width_GL, config.init_height_GL);
+    glutInitWindowSize(config.width_GL, config.height_GL);
     glutInit(sys.argv)
 
     glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_GLUTMAINLOOP_RETURNS);
     glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH)
-    glutCreateWindow("AR CHESS")
+    glutCreateWindow("GLOVE CHESS")
     glutDisplayFunc(draw)
     glutKeyboardFunc(keyboard)
     glutIdleFunc(draw)
 
     # glutFullScreen()
+
 
 def start_application():
     glutMainLoop()

@@ -1,12 +1,10 @@
-import sys
-sys.path.append('../model/')
-sys.path.append('../player/')
-sys.path.append('../IA/')
+"""
+    This class define the IA player
+"""
 
 from player import *
 from chessboard import *
 from executer import *
-from model_utils import *
 from minmax import *
 
 class IAPlayer(Player):
@@ -15,23 +13,9 @@ class IAPlayer(Player):
         self.name = role
 
     def doMove(self):
-        print("ciao IA")
-
-        # Prendere lo stato attuale
         _chessboard = Chessboard.getInstance().getPieces()
+        move = minmax(_chessboard, 4, self.name)
 
-        # Avvii min-max con lo stato attuale
-        move = minmax(_chessboard, 3, self.name)
-
-        # Effettua la mossa
-        print("MOVE", move.getFrom(), move.getTo())
+        print("[IA PLAYER]: chosen move ", move.getFrom(), move.getTo())
         if move != None:
             checkAndExecuteMove(move.getFrom(), move.getTo())
-
-
-# if __name__ == '__main__':
-#     c = Chessboard.getInstance()
-#     c.increment_turn()
-#     player = IAPlayer("BLACK")
-#
-#     move = player.doMove()

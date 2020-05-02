@@ -1,3 +1,7 @@
+"""
+    Define the structure of an action.
+"""
+
 class Action():
 
     def __init__(self, from_, to_):
