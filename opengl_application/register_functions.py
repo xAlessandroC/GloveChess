@@ -27,6 +27,7 @@ from calibration import *
 from find_centers import *
 from model_utils import *
 from human_player import *
+from CLI_player import *
 from selector_utils import *
 
 
@@ -109,7 +110,8 @@ def loading(args):
 
     cv2.imshow("Chess debug window", _chessboard.toPrint())
 
-    human = HumanPlayer(config.human_role)
+    # human = HumanPlayer(config.human_role)
+    human = CLIPlayer(config.human_role)
     ia = IAPlayer(config.ia_role)
     playerW = Thread_P(human)
     playerB = Thread_P(ia)

@@ -46,6 +46,12 @@ def nextState(node, move):
 
     return state_copy
 
+def getOtherRole(role):
+    if role == "WHITE":
+        return "BLACK"
+    else:
+        return "WHITE"
+
 
 WEIGHTS = {
     "PAWN" : 1,
@@ -65,9 +71,15 @@ def heuristic(node, role):
 
     num_controlled_cells = 0
 
+    king_threatened = 0
+    king_pos = (-1,-1)
+
     for i in range(8):
         for j in range(8):
             piece_name = state[i][j].name
+
+            if piece_name[2:] == "KING" and  piece_name.startswith(role[0]):
+                king_pos = (i,j)
 
             # Value of state
             if piece_name.startswith("W"):
@@ -86,7 +98,11 @@ def heuristic(node, role):
                 num_controlled_cells = len(possibleMoves)
 
 
+    if king_pos == (-1,-1):
+        king_threaten = 1
+        print("king threatened")
+
     if role == "WHITE":
-        return (num_W - num_B) + num_controlled_cells*2
+        return (num_W - num_B) #+ num_controlled_cells - (king_threatened*20)
     if role == "BLACK":
-        return (num_B - num_W) + num_controlled_cells*2
+        return (num_B - num_W) #+ num_controlled_cells - (king_threatened*20)

@@ -78,9 +78,3 @@ def min_value(node, current_depth, max_depth, alpha, beta, role):
         beta = min(beta, node_value)
 
     return node_value
-
-def getOtherRole(role):
-    if role == "WHITE":
-        return "BLACK"
-    else:
-        return "WHITE"
