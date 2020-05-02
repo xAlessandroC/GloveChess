@@ -1,14 +1,17 @@
-from chessboard import Chessboard
-from piece import Piece
-from model_utils import *
-from generator import *
+"""
+    Implements the bishop rules and generates all possible moves from a starting position
+"""
+
 import math
 
+from chessboard import Chessboard
+from chess_enum import *
+from model_utils import *
+from generator import *
 
 class BishopGenerator(Generator):
 
     def generateMoves(self, fromCell):
-        print("### BISHOP GENERATOR ###")
 
         moves = []
         chessboard = Chessboard.getInstance()

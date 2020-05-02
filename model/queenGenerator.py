@@ -1,12 +1,17 @@
+"""
+    Implements the queen rules and generates all possible moves from a starting position
+"""
+
+import math
+
 from chessboard import *
+from chess_enum import *
 from model_utils import *
 from generator import *
-import math
 
 class QueenGenerator(Generator):
 
     def generateMoves(self, fromCell):
-        print("### QUEEN GENERATOR ###")
 
         moves = []
         chessboard = Chessboard.getInstance()

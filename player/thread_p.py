@@ -1,12 +1,14 @@
-import sys
+"""
+    Define the player thread model.
+"""
+
 import os
 import signal
-import register_functions as main
 
+from threading import Thread
 from chessboard import *
 from executer import *
-from model_utils import *
-from threading import Thread
+from chess_enum import *
 
 _chessboard = Chessboard.getInstance()
 
@@ -19,30 +21,16 @@ class Thread_P(Thread):
     def run(self):
         while _chessboard.isEnded() != True and self.stop == False :
             currentTurn = Turn(_chessboard.get_turn()[1]).name
-            print("turno di ", currentTurn)
-            print("Giocatore",self.typeOfPlayer.name,": nuovo ciclo")
+            print("Current turn:", currentTurn)
 
             #SCEGLIE MOSSA
-            main.condition.acquire()
-            currentTurn = Turn(_chessboard.get_turn()[1]).name
+            event = _chessboard.getPlayerEvent(self.typeOfPlayer.name)
+            event.wait()
+            event.clear()
 
-            if self.stop == True:
-                return
+            self.typeOfPlayer.doMove()
 
-            if _chessboard.isEnded() == True:
-                main.condition.release()
-
-            elif currentTurn == self.typeOfPlayer.name:
-                self.typeOfPlayer.doMove()
-
-                main.condition.notifyAll()
-                main.condition.release()
-
-            else:
-                print("Giocatore",self.typeOfPlayer.name,": mi sospendo")
-                main.condition.wait()
-
-        print("Il vincitore è:", _chessboard.getWinner())
+        print("The winner is ", _chessboard.getWinner())
 
     def terminate(self):
         self.stop = True

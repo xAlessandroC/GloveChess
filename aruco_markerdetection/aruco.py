@@ -1,8 +1,13 @@
-import numpy as np
+"""
+    This module implements the recognition of an Aruco marker. The returned rvec and tvec are the results of
+    a filtering step performed by marker_stabilizer module.
+"""
+
 import cv2
+import numpy as np
+
 from cv2 import aruco
-from utils.rendering import *
-from marker_utils import *
+from marker_stabilizer import *
 
 aruco_dict = aruco.Dictionary_get(aruco.DICT_6X6_250)
 size_marker = 8.0
@@ -20,6 +25,8 @@ def detect(frame, camera_matrix, dist_coefs):
     tvec = []
     if corners != []:
         rvecs, tvecs, _ = aruco.estimatePoseSingleMarkers(corners, size_marker, camera_matrix, dist_coefs)
+
+        # Hypothesis: we have only the chessboard marker, so we take only the first result
         rvec = rvecs[0]
         tvec = tvecs[0]
         rendered_img = aruco.drawAxis(rendered_img, camera_matrix, dist_coefs, rvec, tvec, 10.0)

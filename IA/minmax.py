@@ -1,3 +1,7 @@
+"""
+    This module implements the minmax algorithm with alpha-beta pruning and limited-depth search.
+"""
+
 import math
 
 from node import *
@@ -13,7 +17,6 @@ def minmax(state, max_depth, role):
 
     value = max_value(root, 0, max_depth, -math.inf, math.inf, role)
 
-    # print("N CHILD:", len(root_child))
     for child in root_child:
         if child.getValue() == value:
             return child.getAction()
@@ -34,7 +37,7 @@ def max_value(node, current_depth, max_depth, alpha, beta, role):
         next_state = nextState(node, move)
         child_node = Node(next_state)
 
-        node_value = max(node_value, min_value(child_node, current_depth + 1, max_depth, alpha, beta, role))
+        node_value = max(node_value, min_value(child_node, current_depth + 1, max_depth, alpha, beta, getOtherRole(role)))
         child_node.setValue(node_value)
 
         if current_depth == 0:
@@ -62,7 +65,7 @@ def min_value(node, current_depth, max_depth, alpha, beta, role):
         next_state = nextState(node, move)
         child_node = Node(next_state)
 
-        node_value = min(node_value, max_value(child_node, current_depth + 1, max_depth, alpha, beta, role))
+        node_value = min(node_value, max_value(child_node, current_depth + 1, max_depth, alpha, beta, getOtherRole(role)))
         child_node.setValue(node_value)
 
         if current_depth == 0:

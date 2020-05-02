@@ -1,12 +1,17 @@
+"""
+    Implements the knight rules and generates all possible moves from a starting position.
+"""
+
+import math
+
 from chessboard import Chessboard
+from chess_enum import *
 from model_utils import *
 from generator import *
-import math
 
 class KnightGenerator(Generator):
 
     def generateMoves(self, fromCell):
-        print("### KNIGHT GENERATOR ###")
 
         moves = []
         chessboard = Chessboard.getInstance()

@@ -1,9 +1,13 @@
+"""
+    Define the structure of a node of the tree.
+"""
+
 class Node():
 
     def __init__(self, state, value = None, action = None):
-        self.__state = state
-        self.__value = value
-        self.__action = action
+        self.__state = state    # state of the chessboard
+        self.__value = value    # heuristic value
+        self.__action = action  # action which comes from
 
     def setState(self, state):
         self.__state = state
