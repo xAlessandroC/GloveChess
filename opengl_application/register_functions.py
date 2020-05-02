@@ -110,8 +110,8 @@ def loading(args):
 
     cv2.imshow("Chess debug window", _chessboard.toPrint())
 
-    # human = HumanPlayer(config.human_role)
-    human = CLIPlayer(config.human_role)
+    human = HumanPlayer(config.human_role)
+    # human = CLIPlayer(config.human_role)
     ia = IAPlayer(config.ia_role)
     playerW = Thread_P(human)
     playerB = Thread_P(ia)

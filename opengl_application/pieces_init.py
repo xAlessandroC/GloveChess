@@ -35,7 +35,7 @@ id_selectionSprite = None
 
 def load_pieces():
 
-    path = os.getcwd()[:(os.getcwd().find("AR_Chess")+len("AR_Chess"))]
+    path = os.getcwd()[:(os.getcwd().find("Glove_Chess")+len("Glove_Chess"))]
     os.chdir(path)
     print(os.getcwd())
 
