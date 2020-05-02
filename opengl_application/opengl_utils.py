@@ -113,10 +113,7 @@ def updateChessboard(current, previous):
             elif result[i,j]!=0:
                 to_= (i,j)
 
-    # TODO: cancellare print
-    print("prima", from_, to_, result)
     if from_!=[] and to_!=[]:
-        print("ccc",from_, to_)
         print(pieces_data.PIECES_POSITION)
         id = pieces_data.PIECES_POSITION[str(from_[0])+"-"+str(from_[1])]
 

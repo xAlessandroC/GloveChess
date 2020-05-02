@@ -37,10 +37,14 @@ if __name__ == "__main__":
 
     init_application()
 
-    # Open first debug window
-    cv2.namedWindow("Glove window")
+    # Open debug windows
+    cv2.namedWindow("Glove window", cv2.WINDOW_NORMAL)
     cv2.resizeWindow("Glove window", 356,200)
-    cv2.moveWindow("Glove window", 0, 0)
+    cv2.moveWindow("Glove window", 0, 20)
+
+    cv2.namedWindow("Chess debug window",cv2.WINDOW_NORMAL)
+    cv2.resizeWindow("Chess debug window", 350,350)
+    cv2.moveWindow("Chess debug window", 0,280);
 
     # OPENGL_APP
     start_application()

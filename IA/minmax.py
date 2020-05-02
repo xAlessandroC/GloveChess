@@ -37,7 +37,7 @@ def max_value(node, current_depth, max_depth, alpha, beta, role):
         next_state = nextState(node, move)
         child_node = Node(next_state)
 
-        node_value = max(node_value, min_value(child_node, current_depth + 1, max_depth, alpha, beta, role))
+        node_value = max(node_value, min_value(child_node, current_depth + 1, max_depth, alpha, beta, getOtherRole(role)))
         child_node.setValue(node_value)
 
         if current_depth == 0:
@@ -65,7 +65,7 @@ def min_value(node, current_depth, max_depth, alpha, beta, role):
         next_state = nextState(node, move)
         child_node = Node(next_state)
 
-        node_value = min(node_value, max_value(child_node, current_depth + 1, max_depth, alpha, beta, role))
+        node_value = min(node_value, max_value(child_node, current_depth + 1, max_depth, alpha, beta, getOtherRole(role)))
         child_node.setValue(node_value)
 
         if current_depth == 0:
@@ -78,3 +78,9 @@ def min_value(node, current_depth, max_depth, alpha, beta, role):
         beta = min(beta, node_value)
 
     return node_value
+
+def getOtherRole(role):
+    if role == "WHITE":
+        return "BLACK"
+    else:
+        return "WHITE"

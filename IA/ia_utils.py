@@ -46,6 +46,16 @@ def nextState(node, move):
 
     return state_copy
 
+
+WEIGHTS = {
+    "PAWN" : 1,
+    "ROOK" : 5,
+    "KNIGHT" : 3,
+    "BISHOP" : 3,
+    "KING" : 10,
+    "QUEEN" : 9,
+}
+
 def heuristic(node, role):
 
     state = node.getState()
@@ -53,15 +63,30 @@ def heuristic(node, role):
     num_W = 0
     num_B = 0
 
+    num_controlled_cells = 0
+
     for i in range(8):
         for j in range(8):
-            if state[i][j].name.startswith("W"):
-                num_W = num_W + 1
-            if state[i][j].name.startswith("B"):
-                num_B = num_B + 1
+            piece_name = state[i][j].name
+
+            # Value of state
+            if piece_name.startswith("W"):
+                num_W = num_W + WEIGHTS[piece_name[2:]]
+            if piece_name.startswith("B"):
+                num_B = num_B + WEIGHTS[piece_name[2:]]
+
+            # Space dominance
+            if piece_name.startswith(role[0]):
+                generatorName = piece_name[2:].lower() + "Generator"
+                module = __import__(generatorName)
+                class_ = getattr(module, generatorName[0].upper()+generatorName[1:])
+                instance = class_()
+
+                possibleMoves = instance.generateMoves(from_matrix_to_chessboard((i,j)))
+                num_controlled_cells = len(possibleMoves)
 
 
     if role == "WHITE":
-        return (num_W - num_B) * 10
+        return (num_W - num_B) + num_controlled_cells*2
     if role == "BLACK":
-        return (num_B - num_W) * 10
+        return (num_B - num_W) + num_controlled_cells*2

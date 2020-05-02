@@ -21,3 +21,7 @@ init_height_GL = 150
 queue_A = Queue()
 queue_B = Queue()
 queue_img = Queue()
+
+# PLAYERS
+human_role = "WHITE"
+ia_role = "BLACK"

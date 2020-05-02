@@ -21,6 +21,7 @@ from threading import Thread
 from aruco import *
 from thread_p import *
 from IA_player import *
+from chess_enum import *
 from pieces_init import *
 from calibration import *
 from find_centers import *
@@ -106,13 +107,10 @@ def loading(args):
     _chessboard = Chessboard.getInstance()
     glta.current = _chessboard.getPieces()
 
-    cv2.namedWindow("Chess debug window",cv2.WINDOW_NORMAL)
-    cv2.resizeWindow("Chess debug window", 350,350)
-    cv2.moveWindow("Chess debug window", 0,300);
     cv2.imshow("Chess debug window", _chessboard.toPrint())
 
-    human = HumanPlayer("WHITE")
-    ia = IAPlayer("BLACK")
+    human = HumanPlayer(config.human_role)
+    ia = IAPlayer(config.ia_role)
     playerW = Thread_P(human)
     playerB = Thread_P(ia)
     playerW.start()
@@ -124,9 +122,12 @@ def loading(args):
 def render(args):
 
     img = args[0]
-    config.queue_img.put(cv2.cvtColor(img,cv2.COLOR_RGB2BGR))
 
     _chessboard = Chessboard.getInstance()
+
+    if Turn(_chessboard.get_turn()[1]).name == config.human_role:
+        config.queue_img.put(cv2.cvtColor(img,cv2.COLOR_RGB2BGR))
+
     glta.current = _chessboard.getPieces()
     cv2.imshow("Chess debug window", _chessboard.toPrint())
 
