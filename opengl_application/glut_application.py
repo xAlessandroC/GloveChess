@@ -85,10 +85,6 @@ def keyboard(key, x, y):
 def draw():
 
     img = webcam.getNextFrame()
-
-    cv2.namedWindow("Glove window",cv2.WINDOW_NORMAL)
-    cv2.resizeWindow("Glove window", 356,200)
-
     img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
 
     # Apply the right function according to the current state
