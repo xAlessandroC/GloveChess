@@ -3,15 +3,4 @@ __pycache__
 *.avi
 *.mp4
 
-resources/calibration/
-resources/marker/
-resources/chess/
-resources/chess_models/
-resources/chess_models_3/
-resources/chess_models_reduced/
-resources/data/
-resources/ARChess_logo.png
-temp/
-rename.py
-
 *.drawio
