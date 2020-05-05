@@ -19,7 +19,7 @@ from aruco import *
 from webcam import *
 from executer import *
 from chess_enum import *
-from chessboard import *
+from chessboard_model import *
 from calibration import *
 from find_centers import *
 from opengl_utils import *

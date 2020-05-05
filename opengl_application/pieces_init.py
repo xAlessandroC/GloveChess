@@ -7,7 +7,7 @@ import os
 import glut_application as glta
 
 from objloader_complete import *
-from chessboard import *
+from chessboard_model import *
 from opengl_utils import *
 
 ## PIECES

@@ -6,7 +6,7 @@ import os
 import signal
 
 from threading import Thread
-from chessboard import *
+from chessboard_model import *
 from executer import *
 from chess_enum import *
 
