@@ -50,6 +50,7 @@ previous = []
 current_mvm = None
 
 state = "IDLE"
+acquired = False
 
 
 # Register
@@ -63,15 +64,16 @@ register = {
 
 
 def keyboard(key, x, y):
-    global state
+    global state, acquired
 
     bkey = key.decode("utf-8")
 
     if bkey == "q":
         state="EXIT"
 
-    elif bkey == "d":
+    elif bkey == "d" and acquired == False:
         state="DETECTION"
+        acquired = True
 
     elif bkey == "o":
         if aruco_config.size_marker > 1:

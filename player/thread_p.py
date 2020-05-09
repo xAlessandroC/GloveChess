@@ -23,7 +23,6 @@ class Thread_P(Thread):
             currentTurn = Turn(_chessboard.get_turn()[1]).name
             print("Current turn:", currentTurn)
 
-            #SCEGLIE MOSSA
             event = _chessboard.getPlayerEvent(self.typeOfPlayer.name)
             event.wait()
             event.clear()
