@@ -161,7 +161,7 @@ def render(args):
 
     # glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, [0.0,0.0,1.0,1.0])
     lightfv = ctypes.c_float * 4
-    glLightfv(GL_LIGHT0, GL_POSITION, lightfv(-1.0, 1.0, 1.0, 0.0))
+    glLightfv(GL_LIGHT0, GL_POSITION, lightfv(0.0, 0.0, 1.0, 0.0))
     if len(rvec[0]) != 0 and len(tvec[0]) != 0:
         # Fix axis
         tvec[0][0][0] = tvec[0][0][0]
@@ -175,6 +175,11 @@ def render(args):
         glPushMatrix()
         glLoadMatrixd(m.T)
         glta.current_mvm = glGetDoublev(GL_MODELVIEW_MATRIX)
+
+        # light_cor = np.matmul(np.array(m), np.array([0.0,0.0,10.0,0.0]))
+        # light_cor[2] = 1.0
+        # print(light_cor)
+        # glLightfv(GL_LIGHT0, GL_POSITION, lightfv(*light_cor))
 
         # glTranslatef(0, 0, -0.5)
         glRotatef(-180, 1.0, 0.0, 0.0)
