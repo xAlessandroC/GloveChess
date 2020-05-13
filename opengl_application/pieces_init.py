@@ -7,7 +7,7 @@ import os
 import glut_application as glta
 
 from objloader_complete import *
-from chessboard import *
+from chessboard_model import *
 from opengl_utils import *
 
 ## PIECES
@@ -34,11 +34,6 @@ id_selectionSprite = None
 
 
 def load_pieces():
-
-    path = os.getcwd()[:(os.getcwd().find("Glove_Chess")+len("Glove_Chess"))]
-    os.chdir(path)
-    print(os.getcwd())
-
     directory = r"resources\chess_models_reduced"
 
     print("Loading pieces...")

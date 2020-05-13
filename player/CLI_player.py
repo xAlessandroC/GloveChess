@@ -3,7 +3,7 @@
 """
 
 from player import *
-from chessboard import *
+from chessboard_model import *
 from executer import *
 from minmax import *
 

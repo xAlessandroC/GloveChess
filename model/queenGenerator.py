@@ -4,7 +4,7 @@
 
 import math
 
-from chessboard import *
+from chessboard_model import *
 from chess_enum import *
 from model_utils import *
 from generator import *

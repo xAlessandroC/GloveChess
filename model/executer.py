@@ -2,7 +2,7 @@
     Implements several checks and updates chessboard with the specified move.
 """
 
-from chessboard import *
+from chessboard_model import *
 from model_utils import *
 
 

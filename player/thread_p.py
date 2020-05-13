@@ -6,7 +6,7 @@ import os
 import signal
 
 from threading import Thread
-from chessboard import *
+from chessboard_model import *
 from executer import *
 from chess_enum import *
 
@@ -23,7 +23,6 @@ class Thread_P(Thread):
             currentTurn = Turn(_chessboard.get_turn()[1]).name
             print("Current turn:", currentTurn)
 
-            #SCEGLIE MOSSA
             event = _chessboard.getPlayerEvent(self.typeOfPlayer.name)
             event.wait()
             event.clear()
