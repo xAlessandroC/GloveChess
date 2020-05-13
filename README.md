@@ -1,2 +1,2 @@
-# AR_Chess
-An AR Chess Implementation
+# Glove Chess
+An AR Chess Implementation with OpenCV and OpenGL
