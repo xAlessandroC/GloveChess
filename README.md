@@ -38,29 +38,29 @@ python GloveChess_application.py
 
 This is what you should get
 <p align="center">
-  <img width=400px src="./resources/readme/start_screen.png">
+  <img width=600px src="./resources/readme/start_screen.png">
 </p>
 
 
 ## Working application
 Step 1: At the beginning the application need to acquire the color for hand detection, so put the hand in front of the green square and press 'd'
 <p align="center">
-  <img width=400px src="./resources/readme/detect_color.png">
+  <img width=600px src="./resources/readme/detect_color.png">
 </p>
 Step 2: Now the game starts
 <p align="center">
-  <img width=400p src="./resources/readme/start_game.gif">
+  <img width=600px src="./resources/readme/start_game.gif">
 </p>
 
 ## How to make chess move
 Since the projection of the chessboard happen over the hand we add a pointer that helps you to keep trace of the selected piece/cell.
 Use your whole hand to move the selector
 <p align="center">
-  <img width=400px src="./resources/readme/movement.gif">
+  <img width=600px src="./resources/readme/movement.gif">
 </p>
 Use two finger to selected the starting or ending cell
 <p align="center">
-  <img width=400px src="./resources/readme/selection.gif">
+  <img width=600px src="./resources/readme/selection.gif">
 </p>
 
 Hint: you can use the terminal to know if the selection has been computed properly, sometimes some mistakes can happen
