@@ -69,5 +69,5 @@ Hint: you can use the terminal to know if the selection has been computed proper
 If you want to know the theory/work behind this project consult the [Wiki](https://github.com/xAlessandroC/GloveChess/wiki)-->
 
 ## Credits
-Thanks to [Pietro Morisco](https://www.instagram.com/pietromoriscogd/?hl=it) for the  logo!<br>
+Thanks to [Pietro Morisco](http://pietromorisco.it/) for the  logo!<br>
 Thanks to [printable_models](https://free3d.com/it/user/printable_models) for the chess 3D models
